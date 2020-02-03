@@ -21,7 +21,7 @@ class DBHelper {
 
   //untuk menentukan nama database dan lokasi yg dibuat
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = directory.path + 'contact.db';
+    String path = directory.path + 'main.db';
 
    //create, read databases
     var todoDatabase = openDatabase(path, version: 1, onCreate: _createDb);
@@ -34,6 +34,7 @@ class DBHelper {
     await db.execute('''
       CREATE TABLE auth (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
         accessToken TEXT,
         refreshToken TEXT
       )
@@ -55,7 +56,7 @@ class DBHelper {
 
   Future<int> insert(Auth object) async {
     Database db = await this.database;
-    int count = await db.insert('contact', object.toJson());
+    int count = await db.insert('auth', object.toJson());
     return count;
   }
 
@@ -67,13 +68,13 @@ class DBHelper {
   }
   Future<int> delete(int id) async {
     Database db = await this.database;
-    int count = await db.delete('contact', 
+    int count = await db.delete('auth', 
                                 where: 'id=?', 
                                 whereArgs: [id]);
     return count;
   }
 
-  Future<List<Auth>> getContactList() async {
+  Future<List<Auth>> getAuthList() async {
     var contactMapList = await select();
     int count = contactMapList.length;
     List<Auth> contactList = List<Auth>();

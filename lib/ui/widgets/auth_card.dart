@@ -1,7 +1,10 @@
 import 'package:driver/models/auth_mode.dart';
+import 'package:driver/models/responseapi.dart';
+import 'package:driver/scope/main_model.dart';
 import 'package:driver/utils/validations.dart';
 import 'package:flutter/material.dart';
 import 'package:driver/models/http_exception.dart';
+import 'package:scoped_model/scoped_model.dart';
 class AuthCard extends StatefulWidget {
   const AuthCard({
     Key key,
@@ -77,30 +80,18 @@ class _AuthCardState extends State<AuthCard>
     );
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(Function authenticate) async {
     if (!_formKey.currentState.validate()) {
       // Invalid!
       return;
     }
     _formKey.currentState.save();
-    setState(() {
-      _isLoading = true;
-    });
+    
     try {
-      
+      ResponseApi responseApi =  await authenticate(_authData['email'], _authData['password'], _authMode);
+
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
-      if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email address is already in use.';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This is not a valid email address';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak.';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find a user with that email.';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid password.';
-      }
       _showErrorDialog(errorMessage);
     } catch (error) {
       const errorMessage =
@@ -159,23 +150,24 @@ class _AuthCardState extends State<AuthCard>
                 SizedBox(
                   height: 20,
                 ),
-                if (_isLoading)
-                  CircularProgressIndicator()
-                else
-                  SizedBox(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      child: Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
-                      onPressed: _submit,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                ScopedModelDescendant<MainModel>(
+                  builder: (BuildContext context, Widget child, MainModel model) {
+                    return SizedBox(
+                      width: double.infinity,
+                      child: RaisedButton(
+                        child: Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
+                        onPressed: () => _submit(model.authenticate),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding:EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
+                        color: Theme.of(context).primaryColor,
+                        textColor: Theme.of(context).primaryTextTheme.button.color,
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
-                      color: Theme.of(context).primaryColor,
-                      textColor: Theme.of(context).primaryTextTheme.button.color,
-                    ),
-                  ),
+                    );
+                  },
+                )
+                
                 
               ],
             ),

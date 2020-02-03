@@ -12,7 +12,7 @@ import 'package:driver/utils/prefs.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class MainModel extends Model with ConnectedModel,UtilityModel{}
+class MainModel extends Model with ConnectedModel,UtilityModel,UserModel{}
 
 mixin ConnectedModel on Model {
   ResponseApi globResult = new ResponseApi();
@@ -21,8 +21,7 @@ mixin ConnectedModel on Model {
   
   
   Dio dio = new Dio();
-  final JsonDecoder _decoder = new JsonDecoder();
-  final JsonEncoder _encoder = new JsonEncoder();
+  
 
   ViewState _state;
   ViewState get state => _state;
@@ -56,7 +55,6 @@ mixin UserModel on ConnectedModel {
       'password': password,
       'returnSecureToken': true
     };
-    print(authData);
     Response response;
     
     if (mode == AuthMode.Login) {
@@ -81,18 +79,21 @@ mixin UserModel on ConnectedModel {
     }
     
     final Map<String, dynamic> responseData = json.decode(json.encode(response.data));
-    globResult = ResponseApi.fromJson(responseData);
-    bool hasError = true;
+    print(responseData['data']);
+    
+    
     String message = 'Something went wrong.';
     globResult = ResponseApi.fromJson(responseData);
+    print(globResult);
     if (globResult.status == 'error') {
       message = globResult.message;
+    
     }
     
     if (globResult.data != null) {
       var data = globResult.data;
       int ex = (data['expireTime'] != null)? data['expireTime']:3600;
-      hasError = false;
+    
       message = 'Authentication succeeded!';
       _authenticatedUser = User(
           id: responseData['id'],

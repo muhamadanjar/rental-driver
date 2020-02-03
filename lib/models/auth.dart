@@ -1,10 +1,9 @@
-import 'package:driver/models/user.dart';
 
 class Auth {
   int id;
   String accessToken;
   String refreshToken;
-  User _user;
+
 
   Auth({this.id,this.accessToken,this.refreshToken});
 
