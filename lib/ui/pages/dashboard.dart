@@ -1,6 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:driver/scope/main_model.dart';
+import 'package:driver/ui/pages/home.dart';
+import 'package:driver/ui/pages/profile.dart';
+import 'package:driver/ui/themes/styles.dart';
+import 'package:driver/utils/prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:scoped_model/scoped_model.dart';
 class DashboardPage extends StatelessWidget {
   final TextStyle whiteText = TextStyle(color: Colors.white);
   final MainModel _model;
@@ -14,6 +20,8 @@ class DashboardPage extends StatelessWidget {
         title: Text("Dashboard"),
         centerTitle: true,
       ),
+      backgroundColor: Colors.grey.shade800,
+      drawer: _buildDrawer(context),
       body: _buildBody(context),
 
     );
@@ -40,8 +48,7 @@ class DashboardPage extends StatelessWidget {
                           ListTile(
                             title: Text(
                               "9,850",
-                              style:
-                                  Theme.of(context).textTheme.display1.copyWith(
+                              style:Theme.of(context).textTheme.display1.copyWith(
                                         color: Colors.white,
                                         fontSize: 24.0,
                                       ),
@@ -71,8 +78,7 @@ class DashboardPage extends StatelessWidget {
                           ListTile(
                             title: Text(
                               "70 bpm",
-                              style:
-                                  Theme.of(context).textTheme.display1.copyWith(
+                              style:Theme.of(context).textTheme.display1.copyWith(
                                         color: Colors.white,
                                         fontSize: 24.0,
                                       ),
@@ -200,6 +206,128 @@ class DashboardPage extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+
+  _buildDrawer(BuildContext context) {
+    final String image = 'https://firebasestorage.googleapis.com/v0/b/dl-flutter-ui-challenges.appspot.com/o/img%2F1.jpg?alt=media';
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) => Drawer(
+        child: Container(
+          padding: const EdgeInsets.only(left: 16.0, right: 40),
+          decoration: BoxDecoration(color: primaryColor, boxShadow: [BoxShadow(color: Colors.black45)]),
+          width: 300,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.power_settings_new,
+                        color: activeColor,
+                      ),
+                      onPressed: model.logout,
+                    ),
+                  ),
+                  Container(
+                    height: 90,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(colors: [Colors.orange, Colors.deepOrange])),
+                    child: CircleAvatar(
+                      radius: 40,
+                      backgroundImage: CachedNetworkImageProvider(image),
+                    ),
+                  ),
+                  SizedBox(height: 5.0),
+                  Text(
+                    model.user != null ? model.user.name : 'DriverName',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    model.user != null ? model.user.email : 'DriverName',
+                    style: TextStyle(color: activeColor, fontSize: 16.0),
+                  ),
+                  SizedBox(height: 30.0),
+                  _buildRow(Icons.home, "Home"),
+                  _buildDivider(),
+                  InkWell(child: _buildRow(Icons.person_pin, "Profile"),onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage()));
+                  },),
+                  _buildDivider(),
+                  _buildRow(Icons.message, "Pesan", showBadge: true),
+                  _buildDivider(),
+                  _buildRow(Icons.notifications, "Notifikasi",
+                      showBadge: true),
+                  _buildDivider(),
+                  _buildRow(Icons.settings, "Pengaturan"),
+                  _buildDivider(),
+                  _buildRow(Icons.email, "Contact us"),
+                  _buildDivider(),
+                  InkWell(child: _buildRow(Icons.info_outline, "Bantuan"),onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(model)));
+                  },),
+                  _buildDivider(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Divider _buildDivider() {
+    return Divider(
+      color: dividerColor,
+    );
+  }
+
+  Widget _buildRow(IconData icon, String title, {bool showBadge = false}) {
+    final TextStyle tStyle = TextStyle(color: activeColor, fontSize: 16.0);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(children: [
+        Icon(
+          icon,
+          color: activeColor,
+        ),
+        SizedBox(width: 10.0),
+        Text(
+          title,
+          style: tStyle,
+        ),
+        Spacer(),
+        if (showBadge)
+          Material(
+            color: Colors.deepOrange,
+            elevation: 5.0,
+            shadowColor: Colors.red,
+            borderRadius: BorderRadius.circular(5.0),
+            child: Container(
+              width: 25,
+              height: 25,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.deepOrange,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: Text(
+                "10+",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          )
+      ]),
     );
   }
 }

@@ -20,7 +20,13 @@ class HomeState extends State<HomePage> {
 
   DBHelper dbHelper = DBHelper();
   int count = 0;
-  List<Auth> contactList;   
+  List<Auth> contactList;
+
+  @override
+  void initState() {
+    updateListView();
+    super.initState();
+  }   
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +75,8 @@ class HomeState extends State<HomePage> {
               backgroundColor: Colors.red,
               child: Icon(Icons.people),
             ),
-            title: Text(this.contactList[index].accessToken, style: textStyle,),
-            subtitle: Text(this.contactList[index].refreshToken),
+            title: Text(this.contactList[index].name == null ? "No Name":this.contactList[index].name, style: textStyle,),
+            subtitle: Text(this.contactList[index].accessToken),
             trailing: GestureDetector(
               child: Icon(Icons.delete),
               onTap: () {
@@ -113,6 +119,7 @@ class HomeState extends State<HomePage> {
     dbFuture.then((database) {
       Future<List<Auth>> contactListFuture = dbHelper.getAuthList();
       contactListFuture.then((contactList) {
+        print(contactList);
         setState(() {
           this.contactList = contactList;
           this.count = contactList.length;

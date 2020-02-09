@@ -2,17 +2,19 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:driver/models/auth.dart';
 import 'package:driver/models/auth_mode.dart';
 import 'package:driver/models/responseapi.dart';
 import 'package:driver/models/user.dart';
 import 'package:driver/models/user_notification.dart';
 import 'package:driver/models/viewstate.dart';
 import 'package:driver/utils/api_provider.dart';
+import 'package:driver/utils/dbhelper.dart';
 import 'package:driver/utils/prefs.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class MainModel extends Model with ConnectedModel,UtilityModel,UserModel{}
+class MainModel extends Model with ConnectedModel,UtilityModel,UserModel,OrderModel{}
 
 mixin ConnectedModel on Model {
   ResponseApi globResult = new ResponseApi();
@@ -36,7 +38,7 @@ mixin ConnectedModel on Model {
 mixin UserModel on ConnectedModel {
   Timer _authTimer;
   PublishSubject<bool> _userSubject = PublishSubject();
-
+  DBHelper dbHelper = DBHelper();
   Future<List<UserNotification>> get getDataNotifFromApi => _apiProvider.getUserNotification(_authenticatedUser.token); 
   User get user {
     return _authenticatedUser;
@@ -79,7 +81,7 @@ mixin UserModel on ConnectedModel {
     }
     
     final Map<String, dynamic> responseData = json.decode(json.encode(response.data));
-    print(responseData['data']);
+    print(responseData);
     
     
     String message = 'Something went wrong.';
@@ -105,6 +107,8 @@ mixin UserModel on ConnectedModel {
       final DateTime now = DateTime.now();
       final DateTime expiryTime = now.add(Duration(seconds: ex));
       final SharedPreferences prefs = await SharedPreferences.getInstance();
+      Auth _authData = Auth(id: responseData['id'],name: email, accessToken: responseData['access_token'],refreshToken: responseData['refresh_token']);
+      dbHelper.insert(_authData);
       prefs.setString('token', responseData['access_token']);
       prefs.setString('userEmail', email);
       prefs.setString('userId', responseData['id']);
@@ -167,4 +171,7 @@ mixin UserModel on ConnectedModel {
   }
 }
 
+mixin OrderModel on ConnectedModel{
+  List history;
+}
 mixin UtilityModel on ConnectedModel {}

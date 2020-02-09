@@ -88,7 +88,7 @@ class EntryFormState extends State<EntryForm> {
                       onPressed: () {
                         if (contact == null) {
                           // tambah data
-                          contact = Auth(accessToken: nameController.text,refreshToken: phoneController.text);
+                          contact = Auth(name: nameController.text,refreshToken: phoneController.text);
                         } else {
                           // ubah data
                           contact.accessToken = nameController.text;

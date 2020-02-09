@@ -1,7 +1,6 @@
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/pages/auth.dart';
 import 'package:driver/ui/pages/dashboard.dart';
-import 'package:driver/ui/pages/home.dart';
 import 'package:driver/ui/pages/notfound.dart';
 import 'package:driver/utils/prefs.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +40,7 @@ class _MyAppState extends State<MyApp> {
           primarySwatch: Colors.blue,
         ),
         routes: {
-          RoutePaths.Index: (BuildContext context) => !_isAuthenticated ? AuthPage() : HomePage(_model),
+          RoutePaths.Index: (BuildContext context) => !_isAuthenticated ? AuthPage() : DashboardPage(_model),
         },
         onUnknownRoute: (RouteSettings setting) {
           // String unknownRoute = setting.name;
