@@ -33,10 +33,14 @@ class RoutePaths {
 class ResourceLink{
   static final baseUri = apiURL;
   static final loginUrl = baseUri + "/auth/login";
+  static final loginGrantPassword = baseUri + "/auth/grant-password";
+  
   static final registerUrl = baseUri + "/register";
   static final logoutUrl = baseUri + "/auth/logout";
-  static final updateLocation =  baseUri + "/user/update_position";
+  static final updateLocation =  baseUri + "/users/update-location";
+  static final updateActivity = baseUri + "users/update-activity";
   static final getUser =  baseUri + "/auth/user";
+
   static final postUpdateStatus =  baseUri + "/user/changeonline";
   static final checkTrans =  baseUri + "/driver/checkjob";
   static final postBooking =  baseUri + "/booking";

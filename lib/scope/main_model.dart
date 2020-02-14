@@ -14,14 +14,13 @@ import 'package:driver/utils/prefs.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class MainModel extends Model with ConnectedModel,UtilityModel,UserModel,OrderModel{}
+class MainModel extends Model with ConnectedModel,UtilityModel,UserModel,OrderModel,RequestSaldo{}
 
 mixin ConnectedModel on Model {
   ResponseApi globResult = new ResponseApi();
   ApiProvider _apiProvider =  new ApiProvider(); 
   User _authenticatedUser;
-  
-  
+  String message = 'Something went wrong.';
   Dio dio = new Dio();
   
 
@@ -33,6 +32,36 @@ mixin ConnectedModel on Model {
     notifyListeners();
   }
   
+}
+
+mixin RequestSaldo on ConnectedModel{
+  Future<Map<String,dynamic>> uploadBukti(FormData formData) async{
+    setState(ViewState.Busy);
+    notifyListeners();
+    bool hasError = true;
+    String message = 'Something went wrong.';
+
+    FormData reqData = formData;
+
+    Response response = await dio.post("$apiURL/topup/bukti",data: reqData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${_authenticatedUser.token}'
+          }
+        )
+    );
+
+    final int statusCode = response.statusCode;
+//    final bool status = response.data.status;
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+
+
+    setState(ViewState.Idle);
+    notifyListeners();
+    return {'success': !hasError, 'message': message};
+  } 
 }
 
 mixin UserModel on ConnectedModel {
@@ -53,7 +82,7 @@ mixin UserModel on ConnectedModel {
     setState(ViewState.Busy);
     notifyListeners();
     final Map<String, dynamic> authData = {
-      'email': email,
+      'username': email,
       'password': password,
       'returnSecureToken': true
     };
@@ -61,7 +90,7 @@ mixin UserModel on ConnectedModel {
     
     if (mode == AuthMode.Login) {
       response = await dio.post(
-        ResourceLink.loginUrl,
+        ResourceLink.loginGrantPassword,
         data: json.encode(authData),
         options: Options(
           headers: {
@@ -83,24 +112,16 @@ mixin UserModel on ConnectedModel {
     final Map<String, dynamic> responseData = json.decode(json.encode(response.data));
     print(responseData);
     
-    
-    String message = 'Something went wrong.';
-    globResult = ResponseApi.fromJson(responseData);
-    print(globResult);
-    if (globResult.status == 'error') {
-      message = globResult.message;
-    
-    }
-    
-    if (globResult.data != null) {
-      var data = globResult.data;
-      int ex = (data['expireTime'] != null)? data['expireTime']:3600;
+    if (responseData != null) {
+      
+      int ex = (responseData['expires_in'] != null)? responseData['expires_in']:31622400;
     
       message = 'Authentication succeeded!';
       _authenticatedUser = User(
           id: responseData['id'],
           email: email,
           name: email,
+          token: responseData['access_token']
       );
       setAuthTimeout(ex);
       _userSubject.add(true);
@@ -160,7 +181,7 @@ mixin UserModel on ConnectedModel {
   }
 
   Future<ResponseApi> getUserNotifikasi() async{
-    await dio.get("$apiURL/user-notifiacations",
+    Response response = await dio.get("$apiURL/user-notifiacations",
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -168,7 +189,55 @@ mixin UserModel on ConnectedModel {
         }
       )
     );
+
+    if(response.statusCode == 200){
+      Map map = json.decode(json.encode(response.data));
+      return ResponseApi.fromJson(map);
+    }
+    return ResponseApi(code: 400,message: message,data: null,status: 'error');
+
   }
+
+  Future<ResponseApi> getUser() async{
+    Response response = await dio.get("$apiURL/auth/user",
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authenticatedUser.token}'
+        }
+      )
+    );
+    if(response.statusCode == 200){
+      Map map = json.decode(json.encode(response.data));
+      return ResponseApi.fromJson(map);
+    }
+    return ResponseApi(code: 400,message: message,data: null,status: 'error');
+  }
+
+  Future<void> updateLocation() async{
+    Response response = await dio.get(ResourceLink.updateLocation,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authenticatedUser.token}'
+        }
+      )
+    );
+    ResponseApi.fromJson(response.data);
+  }
+
+  Future<void> setAktivity() async{
+    Response response = await dio.get(ResourceLink.updateActivity,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authenticatedUser.token}'
+        }
+      )
+    );
+    ResponseApi.fromJson(response.data);
+  }
+
 }
 
 mixin OrderModel on ConnectedModel{

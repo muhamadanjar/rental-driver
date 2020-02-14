@@ -127,10 +127,10 @@ class _AuthCardState extends State<AuthCard>
                 TextFormField(
                   decoration: InputDecoration(labelText: 'E-Mail'),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    return new Validations().validateEmail(value);
+                  // validator: (value) {
+                  //   return new Validations().validateEmail(value);
                     
-                  },
+                  // },
                   onSaved: (value) {
                     _authData['email'] = value;
                   },

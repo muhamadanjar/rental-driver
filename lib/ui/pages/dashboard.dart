@@ -1,16 +1,30 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/pages/home.dart';
 import 'package:driver/ui/pages/profile.dart';
 import 'package:driver/ui/themes/styles.dart';
-import 'package:driver/utils/prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scoped_model/scoped_model.dart';
-class DashboardPage extends StatelessWidget {
-  final TextStyle whiteText = TextStyle(color: Colors.white);
+class DashboardPage extends StatefulWidget {
   final MainModel _model;
   DashboardPage(this._model);
+  
+
+  @override
+  _DashboardPageState createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  final TextStyle whiteText = TextStyle(color: Colors.white);
+  Timer _timer;
+  @override
+  void initState() {
+    onStartTimer();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +37,7 @@ class DashboardPage extends StatelessWidget {
       backgroundColor: Colors.grey.shade800,
       drawer: _buildDrawer(context),
       body: _buildBody(context),
+      
 
     );
   }
@@ -120,9 +135,13 @@ class DashboardPage extends StatelessWidget {
                                         fontSize: 24.0,
                                       ),
                             ),
-                            trailing: Icon(
-                              FontAwesomeIcons.fire,
-                              color: Colors.white,
+                            trailing: InkWell(
+                              onTap: onStoptimer,
+                              onDoubleTap: onStartTimer,
+                              child: Icon(
+                                FontAwesomeIcons.fire,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                           Padding(
@@ -209,7 +228,7 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  _buildDrawer(BuildContext context) {
+  Widget _buildDrawer(BuildContext context) {
     final String image = 'https://firebasestorage.googleapis.com/v0/b/dl-flutter-ui-challenges.appspot.com/o/img%2F1.jpg?alt=media';
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) => Drawer(
@@ -244,7 +263,7 @@ class DashboardPage extends StatelessWidget {
                   ),
                   SizedBox(height: 5.0),
                   Text(
-                    model.user != null ? model.user.name : 'DriverName',
+                    model.user != null ? model.user.email : 'DriverName',
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 18.0,
@@ -263,8 +282,7 @@ class DashboardPage extends StatelessWidget {
                   _buildDivider(),
                   _buildRow(Icons.message, "Pesan", showBadge: true),
                   _buildDivider(),
-                  _buildRow(Icons.notifications, "Notifikasi",
-                      showBadge: true),
+                  _buildRow(Icons.notifications, "Notifikasi",showBadge: true),
                   _buildDivider(),
                   _buildRow(Icons.settings, "Pengaturan"),
                   _buildDivider(),
@@ -329,5 +347,16 @@ class DashboardPage extends StatelessWidget {
           )
       ]),
     );
+  }
+  void onStoptimer(){
+    print("Timer stop");
+    _timer.cancel();
+  }
+
+  void onStartTimer(){
+    print("Timer start");
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      print(DateTime.now());
+    });
   }
 }
