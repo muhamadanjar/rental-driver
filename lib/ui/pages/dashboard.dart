@@ -22,7 +22,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Timer _timer;
   @override
   void initState() {
-    onStartTimer();
+    // onStartTimer();
     super.initState();
   }
   @override

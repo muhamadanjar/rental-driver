@@ -1,6 +1,5 @@
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/pages/auth.dart';
-import 'package:driver/ui/pages/dashboard.dart';
 import 'package:driver/ui/pages/dashboard2.dart';
 import 'package:driver/ui/pages/notfound.dart';
 import 'package:driver/utils/prefs.dart';

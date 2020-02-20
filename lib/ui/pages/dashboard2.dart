@@ -1,5 +1,6 @@
 import 'package:driver/models/responseapi.dart';
 import 'package:driver/scope/main_model.dart';
+import 'package:driver/ui/pages/detil_order.dart';
 import 'package:driver/ui/pages/history.dart';
 import 'package:driver/ui/pages/profile.dart';
 import 'package:driver/ui/pages/request_saldo.dart';
@@ -36,10 +37,15 @@ class DashboardTwoPage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: _buildTitledContainer("Pemesanan",
-                      child: Container(
-                        height: 290,
-                        child: PieChartSample2(),
-                      )
+                    child: ScopedModelDescendant<MainModel>(
+                      builder: (BuildContext context,Widget child,MainModel model){
+                        return Container(
+                          height: 290,
+                          child: PieChartSample2(),
+                        );
+                      }
+
+                    )
                   ),
                 ),
               ),
@@ -60,109 +66,57 @@ class DashboardTwoPage extends StatelessWidget {
         crossAxisSpacing: 16.0,
         mainAxisSpacing: 16.0,
         childAspectRatio: 1.5,
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Colors.blue,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "+500",
-                  style: stats,
+          ScopedModelDescendant<MainModel>(
+            builder: (BuildContext context,Widget child,MainModel model){
+              var saldo = model.user != null ? model.user.saldo != null ? model.user.saldo.saldo.toString() :'0' : '0';
+              return Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.blue,
                 ),
-                const SizedBox(height: 5.0),
-                Text("Saldo".toUpperCase())
-              ],
-            ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      saldo,
+                      style: stats,
+                    ),
+                    const SizedBox(height: 5.0),
+                    Text("Saldo".toUpperCase())
+                  ],
+
+                ),
+              );
+            }
           ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Colors.pink,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "+300",
-                  style: stats,
-                ),
-                const SizedBox(height: 5.0),
-                Text("Customers".toUpperCase())
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Colors.green,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "+1200",
-                  style: stats,
-                ),
-                const SizedBox(height: 5.0),
-                Text("Orders".toUpperCase())
-              ],
+          ScopedModelDescendant<MainModel>(
+
+            builder:(BuildContext context,Widget child,MainModel model) => Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.green,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "+1200",
+                    style: stats,
+                  ),
+                  const SizedBox(height: 5.0),
+                  Text("Orders".toUpperCase())
+                ],
+              ),
             ),
           ),
         ],
       ),
     );
-    SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: _buildTitledContainer("Stats",
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Text(
-                      "+500",
-                      style: stats,
-                    ),
-                    const SizedBox(height: 5.0),
-                    Text("Leads".toUpperCase())
-                  ],
-                ),
-                const SizedBox(width: 20.0),
-                const SizedBox(width: 20.0),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      "+600",
-                      style: stats,
-                    ),
-                    const SizedBox(height: 5.0),
-                    Text("Orders".toUpperCase())
-                  ],
-                ),
-                const SizedBox(width: 20.0),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      "+100",
-                      style: stats,
-                    ),
-                    const SizedBox(height: 5.0),
-                    Text("Deliveries".toUpperCase())
-                  ],
-                ),
-              ],
-            )),
-      ),
-    );
+
   }
 
   SliverPadding _buildActivities(BuildContext context) {
@@ -180,10 +134,14 @@ class DashboardTwoPage extends StatelessWidget {
                   .map(
                     (activity) => InkWell(
                       onTap: (){
-                        if (activity.title == 'Billing') {
+                        if (activity.title == 'Appointments') {
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>DetilOrder()));
+                        }else if (activity.title == 'TopUp') {
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>RequestSaldoPage()));
                         }else if(activity.title == 'Summary'){
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>HistoryPage()));
+                        }else if(activity.title == 'Pengaturan'){
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>SettingPage()));
                         }else{
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>SettingPage()));
                         }
@@ -323,7 +281,9 @@ class DashboardTwoPage extends StatelessWidget {
     try {
       
       ResponseApi responseApi = await func();
+      print(responseApi);
     } catch (e) {
+      print("error $e");
     }
     
     return null;
@@ -341,5 +301,6 @@ class Activity {
 final List<Activity> activities = [
   Activity(title: "Appointments", icon: FontAwesomeIcons.calendarDay),
   Activity(title: "Summary", icon: FontAwesomeIcons.fileAlt),
-  Activity(title: "Billing", icon: FontAwesomeIcons.dollarSign),
+  Activity(title: "TopUp", icon: FontAwesomeIcons.dollarSign),
+  Activity(title: "Pengaturan", icon: FontAwesomeIcons.cogs),
 ];

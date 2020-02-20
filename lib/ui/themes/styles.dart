@@ -37,3 +37,9 @@ const TextStyle dropDownMenuItemStyle = TextStyle(color: Colors.black, fontSize:
 final Color hisBorderColor = Color(0xFFE6E6E6);
 final Color chipBackgroundColor = Color(0xFFF6F6F6);
 final Color discountBackgroundColor = Color(0xFFFFE08D);
+
+final TextStyle headerStyle = TextStyle(
+    color: Colors.grey.shade800,
+    fontWeight: FontWeight.bold,
+    fontSize: 20.0,
+);

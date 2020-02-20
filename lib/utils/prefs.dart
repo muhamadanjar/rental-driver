@@ -1,11 +1,13 @@
 const bool devMode = false;
-const String apiURL = devMode == true ? "http://192.168.43.110/api":"http://utama-trans.com/new/api";
+const String apiURL = devMode == true ? "http://172.16.1.234/api":"http://utama-trans.com/new/api";
 const double textScaleFactor = 1.0;
 const google_android_api = 'AIzaSyAKl4qWeBABIDPoxo_CHvWuIfgkKoEzS7c';
 const google_web_api = 'AIzaSyAyGT-CSg1nb0YBLihgn8vk9zfbbkk-f1c';
 
 const clientId = 3;
 const clientSecret = 'n9AKwnGZKgg9TJZyGL55HTNRYi6vAsDh59NjR32d';
+
+final String defaultImage = 'https://firebasestorage.googleapis.com/v0/b/dl-flutter-ui-challenges.appspot.com/o/img%2F1.jpg?alt=media';
 class RoutePaths {
   static const String Index = '/';
   static const String Login = 'login';
@@ -51,4 +53,6 @@ class ResourceLink{
   static final getBank = baseUri + "/get_bank";
   static final postRequestSaldo = baseUri + "/post_request_saldo";
   static final postUploadBukti = baseUri + "/post_upload_bukti";
+
+  static final getHistoryBookingUser = baseUri + "/users/booking/history";
 }

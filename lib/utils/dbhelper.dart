@@ -61,6 +61,12 @@ class DBHelper {
     return mapList;
   }
 
+  Future<Auth> findOne(String id)async{
+    Database db = await this.database;
+    var user = await db.query(_tableName,where:'id=?', whereArgs: [id]);
+    return Auth.fromJson(user[0]);
+  }
+
   Future<int> insert(Auth object) async {
     Database db = await this.database;
     int count = await db.insert(_tableName, object.toJson());

@@ -14,70 +14,73 @@ class ProfilePage extends StatelessWidget {
           decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(20))),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              _buildInfo(context),
-              Divider(),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Tell customers a little about yourself",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                      width: 200,
-                      height: 40,
-                      margin: EdgeInsets.only(bottom: 5),
-                      alignment: FractionalOffset.center,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        color: Colors.white,
-                        borderRadius:BorderRadius.all(const Radius.circular(2.0)),
-                      ),
-                      child: Text('Tambah Keterangan',style: TextStyle(color: Colors.blue,fontSize: 15,fontWeight: FontWeight.bold))),
-                  SizedBox(
-                    height: 10,
-                  ),
-                ],
-              ),
-              Divider(),
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "Tanggapan",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        Text(
-                          "Lihat Semua",
-                          style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
+          child: RefreshIndicator(
+            onRefresh: (){},
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                _buildInfo(context),
+                Divider(),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  
-                ],
-              ),
+                    Text(
+                      "Tell customers a little about yourself",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                        width: 200,
+                        height: 40,
+                        margin: EdgeInsets.only(bottom: 5),
+                        alignment: FractionalOffset.center,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.blue, width: 2),
+                          color: Colors.white,
+                          borderRadius:BorderRadius.all(const Radius.circular(2.0)),
+                        ),
+                        child: Text('Tambah Keterangan',style: TextStyle(color: Colors.blue,fontSize: 15,fontWeight: FontWeight.bold))),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+                Divider(),
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "Tanggapan",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          Text(
+                            "Lihat Semua",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
 
-            ],
+                  ],
+                ),
+
+              ],
+            ),
           ),
         )
       ),
@@ -94,7 +97,7 @@ class ProfilePage extends StatelessWidget {
               Column(
                 children: <Widget>[
                   Text(
-                    model.user != null ? model.user.name :'DriverName',
+                    model.user != null ? model.user.email :'DriverName',
                     style: TextStyle(
                       fontSize: 30,
                     ),
@@ -122,7 +125,7 @@ class ProfilePage extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '0',
+                      model.user != null ? (model.user.saldo != null ? model.user.saldo.saldo.toString() : '0' ):'0',
                       style: TextStyle(
                         fontSize: 30,
                       ),

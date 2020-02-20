@@ -1,9 +1,10 @@
 import 'package:driver/models/history.dart';
+import 'package:driver/models/order.dart';
 import 'package:driver/ui/themes/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 class HisCard extends StatelessWidget {
-  final HisDetails hisDetails;
+  final Order hisDetails;
   final formatCurrency = NumberFormat.simpleCurrency(locale: "id_ID");
   final formatDate = DateFormat.yMMMd('en_us');
 
@@ -38,7 +39,7 @@ class HisCard extends StatelessWidget {
                         ),
                         child: Text("Promo",style: TextStyle(color: Colors.white),),
                       ),
-                      Text("${(hisDetails.date)}")
+                      Text("${(hisDetails.createdBy)}")
                     ],
                   ),
                   SizedBox(height: 10,),
@@ -50,16 +51,16 @@ class HisCard extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                    Text("${hisDetails.origin}"),
+                    Text("${hisDetails.orderAddressOrigin}"),
                     SizedBox(height: 5.0,),
-                    Text("${hisDetails.origin}"),
+                    Text("${hisDetails.orderAddressOrigin}"),
                   ],
                   ),
                   SizedBox(height: 10,),
                   Row(
                     children: <Widget>[
                       Text(
-                        '${formatCurrency.format(hisDetails.tripTotal)}',
+                        '${formatCurrency.format(hisDetails.orderNominal)}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0,
@@ -69,7 +70,7 @@ class HisCard extends StatelessWidget {
                         width: 4.0,
                       ),
                       Text(
-                        "(${formatCurrency.format(hisDetails.tripTotal)})",
+                        "(${formatCurrency.format(hisDetails.orderNominal)})",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0,

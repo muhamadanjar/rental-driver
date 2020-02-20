@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:driver/models/auth.dart';
 import 'package:driver/models/auth_mode.dart';
+import 'package:driver/models/order.dart';
 import 'package:driver/models/responseapi.dart';
 import 'package:driver/models/user.dart';
 import 'package:driver/models/user_notification.dart';
@@ -199,7 +200,12 @@ mixin UserModel on ConnectedModel {
   }
 
   Future<ResponseApi> getUser() async{
-    Response response = await dio.get("$apiURL/auth/user",
+
+
+    const url = "$apiURL/auth/user";
+    // dbHelper.findOne('1');
+    
+    Response response = await dio.get(url,
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -207,9 +213,19 @@ mixin UserModel on ConnectedModel {
         }
       )
     );
+    
     if(response.statusCode == 200){
       Map map = json.decode(json.encode(response.data));
-      return ResponseApi.fromJson(map);
+
+      
+      ResponseApi ra = ResponseApi.fromJson(map);
+      print(ra.code);
+      _authenticatedUser.name = ra.data.name;
+      _authenticatedUser.email = ra.data.email;
+      _authenticatedUser.phonenumber = ra.data.phonenumber;
+      _authenticatedUser.metas = ra.data.meta;
+      notifyListeners();
+      return ra;
     }
     return ResponseApi(code: 400,message: message,data: null,status: 'error');
   }
@@ -241,6 +257,22 @@ mixin UserModel on ConnectedModel {
 }
 
 mixin OrderModel on ConnectedModel{
-  List history;
+  List<Order> history;
+
+  Future<void> getHistoryUser()async{
+    Response response = await dio.post(ResourceLink.getHistoryBookingUser,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${_authenticatedUser.token}'
+        }
+      )
+    );
+    print(response.data);
+    ResponseApi ra =  ResponseApi.fromJson(response.data);
+    history =  ra.data;
+    notifyListeners();
+
+  }
 }
 mixin UtilityModel on ConnectedModel {}

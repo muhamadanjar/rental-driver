@@ -1,3 +1,4 @@
+import 'package:driver/utils/prefs.dart';
 import 'package:flutter/material.dart';
 
 import 'package:scoped_model/scoped_model.dart';
@@ -14,6 +15,7 @@ class LogoutListTile extends StatelessWidget {
           title: Text('Logout'),
           onTap: () {
             model.logout();
+            Navigator.pushReplacementNamed(context, RoutePaths.Index);
           },
         );
       },

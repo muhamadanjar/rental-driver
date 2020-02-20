@@ -192,8 +192,6 @@ class _PaymentViewState extends State<PaymentView> {
                   description:
                   "Request anda telah di kirim",
                   buttonText: "Okay",
-                  
-
                 ),
               );
               // Navigator.pushReplacementNamed(context, RoutePaths.Index);
