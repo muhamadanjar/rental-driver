@@ -9,14 +9,14 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 //pendukung program asinkron
 
-class HomePage extends StatefulWidget {
+class AccessTokenPage extends StatefulWidget {
   final MainModel model;
-  HomePage(this.model);
+  AccessTokenPage(this.model);
   @override
   HomeState createState() => HomeState();
 }
 
-class HomeState extends State<HomePage> {
+class HomeState extends State<AccessTokenPage> {
 
   DBHelper dbHelper = DBHelper();
   int count = 0;

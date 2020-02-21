@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:driver/scope/main_model.dart';
-import 'package:driver/ui/pages/home.dart';
+import 'package:driver/ui/pages/accessToken.dart';
 import 'package:driver/ui/pages/profile.dart';
 import 'package:driver/ui/themes/styles.dart';
 import 'package:flutter/material.dart';
@@ -289,7 +289,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   _buildRow(Icons.email, "Contact us"),
                   _buildDivider(),
                   InkWell(child: _buildRow(Icons.info_outline, "Bantuan"),onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(model)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardPage(model)));
                   },),
                   _buildDivider(),
                 ],
