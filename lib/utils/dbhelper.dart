@@ -64,7 +64,8 @@ class DBHelper {
   Future<Auth> findOne(String id)async{
     Database db = await this.database;
     var user = await db.query(_tableName,where:'id=?', whereArgs: [id]);
-    return Auth.fromJson(user[0]);
+    var data = Auth.fromJson(user[0]);
+    return data;
   }
 
   Future<int> insert(Auth object) async {

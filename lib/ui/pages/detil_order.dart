@@ -1,11 +1,15 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
+import 'package:driver/scope/main_model.dart';
+import 'package:driver/ui/themes/styles.dart';
 import 'package:driver/ui/widgets/card_order.dart';
 import 'package:driver/ui/widgets/ui_elements/driverMap.dart';
 import 'package:driver/utils/sizedconfig.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class DetilOrder extends StatefulWidget {
   @override
@@ -32,16 +36,41 @@ class _DetilOrderState extends State<DetilOrder> {
         title: Text("Order Rental"),
       ),
       body: Container(
-        child: Stack(
-          children: <Widget>[
-            DriverMap(),
-            Positioned(
-              bottom: 0,
-              left: 10,
-              right: 10,
-              child: CardOrder()
-            )
-          ],
+        child: ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context,Widget widget,MainModel model)=>
+          model.statusOrder ? Stack(
+            children: <Widget>[
+              DriverMap(),
+              Positioned(
+                bottom: 0,
+                left: 10,
+                right: 10,
+                child: Card(
+                  elevation: 5.0,
+                  shape: const RoundedRectangleBorder(
+                    side: BorderSide(color: Color(0xFFF27A08B)),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.only(left: 16, top: 18, bottom: 0),
+                    child: Column(
+                      children: <Widget>[
+                        Text("${_currentLocation.latitude.toString()} ${_currentLocation.longitude.toString()}"),
+                        MaterialButton(
+                          color: primaryColor,
+                          onPressed: (){
+                            onChangeStatusOrder(model.changeStatusOrder);
+                          },
+                          child: Text("Jemput"),
+                        )
+
+                      ],
+                    ),
+                  ),
+                )
+              )
+            ],
+          ):Container(child: Text("Tidak ada transaksi"),),
         ),
       ),
     );
@@ -50,7 +79,7 @@ class _DetilOrderState extends State<DetilOrder> {
   @override
   void initState() {
     super.initState();
-
+    ScopedModel.of<MainModel>(context).checkOrder();
     initLocation();
   }
 
@@ -113,5 +142,12 @@ class _DetilOrderState extends State<DetilOrder> {
             });
           }
         });
+  }
+
+  onChangeStatusOrder(Function change) async{
+    FormData fm = new FormData();
+    fm.fields.add(MapEntry('order_id','001'));
+    fm.fields.add(MapEntry('status','2'));
+    await change(fm);
   }
 }

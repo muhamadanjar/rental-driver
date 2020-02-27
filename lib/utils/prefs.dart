@@ -55,4 +55,6 @@ class ResourceLink{
   static final postUploadBukti = baseUri + "/post_upload_bukti";
 
   static final getHistoryBookingUser = baseUri + "/users/booking/history";
+  static final getDriverStatusOrder = baseUri + "/driver/booking/active";
+  static final postUpdateOrderStatus = baseUri + "/booking/update-status";
 }

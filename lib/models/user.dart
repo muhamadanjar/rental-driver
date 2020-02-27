@@ -4,7 +4,7 @@ import 'package:driver/models/user_saldo.dart';
 import 'package:flutter/material.dart';
 
 class User {
-  String id;
+  int id;
   String name;
   String email;
   String phonenumber;
