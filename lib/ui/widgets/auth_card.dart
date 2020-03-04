@@ -89,7 +89,7 @@ class _AuthCardState extends State<AuthCard>
     
     try {
       ResponseApi responseApi =  await authenticate(_authData['email'], _authData['password'], _authMode);
-
+      print(responseApi.status);
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
       _showErrorDialog(errorMessage);

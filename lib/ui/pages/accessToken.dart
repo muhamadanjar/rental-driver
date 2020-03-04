@@ -75,7 +75,7 @@ class HomeState extends State<AccessTokenPage> {
               backgroundColor: Colors.red,
               child: Icon(Icons.people),
             ),
-            title: Text(this.contactList[index].name == null ? "No Name":this.contactList[index].name, style: textStyle,),
+            title: Text(this.contactList[index].name == null ? "No Name":this.contactList[index].id.toString(), style: textStyle,),
             subtitle: Text(this.contactList[index].accessToken),
             trailing: GestureDetector(
               child: Icon(Icons.delete),

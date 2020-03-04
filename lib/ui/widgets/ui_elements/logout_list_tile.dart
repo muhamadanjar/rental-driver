@@ -1,3 +1,4 @@
+import 'package:driver/ui/pages/dashboard2.dart';
 import 'package:driver/utils/prefs.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,8 @@ class LogoutListTile extends StatelessWidget {
           title: Text('Logout'),
           onTap: () {
             model.logout();
-            Navigator.pushReplacementNamed(context, RoutePaths.Index);
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>DashboardTwoPage()));
+//            Navigator.pushReplacementNamed(context, RoutePaths.Index);d
           },
         );
       },

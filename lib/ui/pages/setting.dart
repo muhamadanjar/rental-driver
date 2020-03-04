@@ -7,6 +7,8 @@ import 'package:driver/utils/prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scoped_model/scoped_model.dart';
+
+import 'accessToken.dart';
 class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -33,14 +35,21 @@ class SettingPage extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   ScopedModelDescendant<MainModel>(
-                    builder:(BuildContext context,Widget child,MainModel model) => ListTile(
+                    builder:(BuildContext context,Widget child,MainModel model) {
+                      String email = model.user != null ? model.user.email : 'User Driver';
+                      String noAnggota = model.user != null ? (model.user.account != null ? (model.user.account.noAnggota != null ? model.user.account.noAnggota:'No Anggota') :'No Anggota') :'No Anggota';
+                      print(model.user.account.noAnggota);
+                    return ListTile(
                       leading: CircleAvatar(
                         backgroundImage: CachedNetworkImageProvider(defaultImage),
                       ),
-                      title: Text(model.user != null ? model.user.email : 'User Driver'),
-                      subtitle: Text(model.user != null ? (model.user.saldo != null ? model.user.saldo.noAnggota :'No Anggota') :'No Anggota'),
-                      onTap: () {},
-                    ),
+                      title: Text(email),
+                      subtitle: Text(noAnggota),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>AccessTokenPage(model)));
+                      },
+                    );
+                    }
                   ),
                   _buildDivider(),
                   InkWell(

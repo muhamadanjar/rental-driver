@@ -15,15 +15,15 @@ class EntryFormState extends State<EntryForm> {
 
   EntryFormState(this.contact);
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();  
+  TextEditingController accessController = TextEditingController();
+  TextEditingController refreshController = TextEditingController();  
 
   @override
   Widget build(BuildContext context) {
     //kondisi
     if (contact != null) {
-      nameController.text = contact.accessToken;
-      phoneController.text = contact.refreshToken;
+      accessController.text = contact.accessToken;
+      refreshController.text = contact.refreshToken;
     }
     //rubah
     return Scaffold(
@@ -39,10 +39,10 @@ class EntryFormState extends State<EntryForm> {
             Padding (
               padding: EdgeInsets.only(top:20.0, bottom:20.0),
               child: TextField(
-                controller: nameController,
+                controller: accessController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  labelText: 'Nama Lengkap',             
+                  labelText: 'Access Token',             
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0),
                   ),
@@ -57,10 +57,10 @@ class EntryFormState extends State<EntryForm> {
             Padding (
               padding: EdgeInsets.only(top:20.0, bottom:20.0),
               child: TextField(
-                controller: phoneController,
+                controller: refreshController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
-                  labelText: 'Telepon',                
+                  labelText: 'Refresh',                
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0),
                   ),
@@ -88,11 +88,11 @@ class EntryFormState extends State<EntryForm> {
                       onPressed: () {
                         if (contact == null) {
                           // tambah data
-                          contact = Auth(name: nameController.text,refreshToken: phoneController.text);
+                          contact = Auth(name: accessController.text,refreshToken: refreshController.text);
                         } else {
                           // ubah data
-                          contact.accessToken = nameController.text;
-                          contact.refreshToken = phoneController.text;
+                          contact.accessToken = accessController.text;
+                          contact.refreshToken = refreshController.text;
                         }
                         // kembali ke layar sebelumnya dengan membawa objek contact
                         Navigator.pop(context, contact);

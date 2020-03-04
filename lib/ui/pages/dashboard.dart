@@ -349,14 +349,14 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
   void onStoptimer(){
-    print("Timer stop");
-    _timer.cancel();
+    // print("Timer stop");
+    // _timer.cancel();
   }
 
   void onStartTimer(){
-    print("Timer start");
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      print(DateTime.now());
-    });
+    // print("Timer start");
+    // _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    //   print(DateTime.now());
+    // });
   }
 }

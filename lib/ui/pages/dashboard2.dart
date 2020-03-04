@@ -6,16 +6,27 @@ import 'package:driver/ui/pages/profile.dart';
 import 'package:driver/ui/pages/request_saldo.dart';
 import 'package:driver/ui/pages/setting.dart';
 import 'package:driver/ui/widgets/ui_elements/chart.dart';
+import 'package:driver/utils/rental.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class DashboardTwoPage extends StatelessWidget {
-  final String image = 'https://firebasestorage.googleapis.com/v0/b/dl-flutter-ui-challenges.appspot.com/o/img%2F1.jpg?alt=media';
-  final MainModel mainModel = MainModel();
+class DashboardTwoPage extends StatefulWidget {
+  @override
+  _DashboardTwoPageState createState() => _DashboardTwoPageState();
+}
 
+class _DashboardTwoPageState extends State<DashboardTwoPage> {
+  final String image = 'https://firebasestorage.googleapis.com/v0/b/dl-flutter-ui-challenges.appspot.com/o/img%2F1.jpg?alt=media';
+
+  final MainModel mainModel = MainModel();
+  @override
+  void initState() {
+    ScopedModel.of<MainModel>(context).getUser();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +81,8 @@ class DashboardTwoPage extends StatelessWidget {
         children: <Widget>[
           ScopedModelDescendant<MainModel>(
             builder: (BuildContext context,Widget child,MainModel model){
-              var saldo = model.user != null ? model.user.saldo != null ? model.user.saldo.saldo.toString() :'0' : '0';
+              var saldo = model.user != null ? model.user.account != null ? model.user.account.saldo.toString() :'0' : '0';
+              
               return Container(
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
@@ -81,7 +93,7 @@ class DashboardTwoPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      saldo,
+                      RentalUtils.formatRupiah(saldo),
                       style: stats,
                     ),
                     const SizedBox(height: 5.0),

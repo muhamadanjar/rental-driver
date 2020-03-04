@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:driver/models/order.dart';
+import 'package:driver/models/responseapi.dart';
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/themes/styles.dart';
 import 'package:driver/ui/widgets/card_order.dart';
@@ -25,6 +27,9 @@ class _DetilOrderState extends State<DetilOrder> {
   StreamSubscription<LocationData> _locationSubscription;
 
   bool _permission = false;
+  Order _order;
+  String curOrderId;
+  String statusOrder;
 
   String error;
 
@@ -34,14 +39,17 @@ class _DetilOrderState extends State<DetilOrder> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Order Rental"),
+        centerTitle: true,
       ),
       body: Container(
+
         child: ScopedModelDescendant<MainModel>(
-          builder: (BuildContext context,Widget widget,MainModel model)=>
-          model.statusOrder ? Stack(
+          builder: (BuildContext context,Widget widget,MainModel model){
+
+            return model.isOrdered ? Stack(
             children: <Widget>[
-              DriverMap(),
-              Positioned(
+                DriverMap(),
+                Positioned(
                 bottom: 0,
                 left: 10,
                 right: 10,
@@ -56,12 +64,21 @@ class _DetilOrderState extends State<DetilOrder> {
                     child: Column(
                       children: <Widget>[
                         Text("${_currentLocation.latitude.toString()} ${_currentLocation.longitude.toString()}"),
+                        Text("${model.currentOrder.orderStatus}"),
                         MaterialButton(
                           color: primaryColor,
                           onPressed: (){
                             onChangeStatusOrder(model.changeStatusOrder);
+                            model.checkOrder();
                           },
                           child: Text("Jemput"),
+                        ),
+                        MaterialButton(
+                          color: Color(0xFFFFF0000),
+                          onPressed: (){
+                            onCancelOrder(model.changeStatusOrder);
+                          },
+                          child: Text("Batalkan"),
                         )
 
                       ],
@@ -70,7 +87,17 @@ class _DetilOrderState extends State<DetilOrder> {
                 )
               )
             ],
-          ):Container(child: Text("Tidak ada transaksi"),),
+          ):Card(
+            elevation: 8,
+            margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+            child: Container(
+              alignment: Alignment.center,
+              height: SizeConfig.blockHeight * 15,
+              child: Text("Tidak ada transaksi")
+              ),
+            );
+          }
+
         ),
       ),
     );
@@ -80,6 +107,7 @@ class _DetilOrderState extends State<DetilOrder> {
   void initState() {
     super.initState();
     ScopedModel.of<MainModel>(context).checkOrder();
+  
     initLocation();
   }
 
@@ -143,11 +171,24 @@ class _DetilOrderState extends State<DetilOrder> {
           }
         });
   }
-
+  onRefresh(MainModel model) async{
+    await model.checkOrder();
+  }
   onChangeStatusOrder(Function change) async{
+    var status = (ScopedModel.of<MainModel>(context).currentOrder.orderStatus+1).toString();
+    var current = ScopedModel.of<MainModel>(context).currentOrder.orderId.toString();
     FormData fm = new FormData();
-    fm.fields.add(MapEntry('order_id','001'));
-    fm.fields.add(MapEntry('status','2'));
-    await change(fm);
+    fm.fields.add(MapEntry('order_id',current));
+    fm.fields.add(MapEntry('status',status));
+    ResponseApi response = await change(fm);
+    print(response.message);
+  }
+
+  onCancelOrder(Function change) async{
+    FormData fm = new FormData();
+    fm.fields.add(MapEntry('order_id',curOrderId));
+    fm.fields.add(MapEntry('status',Order.STATUS_CANCEL));
+    ResponseApi response = await change(fm);
+    print(response.status);
   }
 }

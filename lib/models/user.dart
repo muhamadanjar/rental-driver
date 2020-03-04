@@ -1,4 +1,5 @@
 import 'package:driver/models/user_meta.dart';
+import 'package:driver/models/user_mobil.dart';
 import 'package:driver/models/user_notification.dart';
 import 'package:driver/models/user_saldo.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +14,11 @@ class User {
   String file;
   
   List<UserMeta> metas;
-  UserSaldo saldo;
+  UserSaldo account;
   UserNotification userNotification;
+  UserMobil mobil;
 
-  User({@required this.id, this.email = "email",this.name = 'User',this.phonenumber = "0",this.token,this.refreshToken,this.file,this.metas,this.saldo,this.userNotification});
+  User({@required this.id, this.email = "email",this.name = 'User',this.phonenumber = "0",this.token,this.refreshToken,this.file,this.metas,this.account,this.userNotification,this.mobil});
   factory User.fromJson(Map<String, dynamic> json) {
     List<UserMeta> usermetas = new List<UserMeta>();
     if (json['meta'] != null) {
@@ -32,9 +34,17 @@ class User {
         token: json['access_token'],
         refreshToken: json['refresh_token'],
         file: json['file'],
-        saldo: json['saldo'] != null ? new UserSaldo.fromJson(json['saldo']) : null,
+        account: json['account'] != null ? new UserSaldo.fromJson(json['account']) : null,
         metas: usermetas,
     );
   }
   
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['email'] = this.email;
+    
+    return data;
+  }
 }

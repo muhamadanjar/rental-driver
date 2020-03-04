@@ -21,8 +21,8 @@ class _DriverMapState extends State<DriverMap> {
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   
-  Set<Marker> _markers = {};
-  Set<Polyline> _polylines = {};
+  Set<Marker> _markers;
+  Set<Polyline> _polylines;
 
   Completer<GoogleMapController> _controller = Completer();
 

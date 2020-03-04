@@ -19,6 +19,11 @@ class Order {
   String _createdBy;
   String _updatedBy;
 
+  static final String STATUS_PENDING = '0';
+  static final String STATUS_COMPLETE = '4';
+  static final String STATUS_CANCEL = '5';
+  static final String STATUS_DECLINE = '6';
+
   Order(
       {int orderId,
         String orderCode,

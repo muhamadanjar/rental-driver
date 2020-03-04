@@ -21,6 +21,7 @@ mixin ConnectedModel on Model {
   ResponseApi globResult = new ResponseApi();
   ApiProvider _apiProvider =  new ApiProvider(); 
   User _authenticatedUser;
+  Auth _auth;
   String message = 'Something went wrong.';
   Dio dio = new Dio();
   
@@ -78,8 +79,7 @@ mixin UserModel on ConnectedModel {
     return _userSubject;
   }
 
-  Future<ResponseApi> authenticate(String email, String password,
-      [AuthMode mode = AuthMode.Login]) async {
+  Future<ResponseApi> authenticate(String email, String password,[AuthMode mode = AuthMode.Login]) async {
     setState(ViewState.Busy);
     notifyListeners();
     final Map<String, dynamic> authData = {
@@ -111,11 +111,11 @@ mixin UserModel on ConnectedModel {
     }
     
     final Map<String, dynamic> responseData = json.decode(json.encode(response.data));
-    print(responseData);
+    print("response $responseData['access_token]");
     
-    if (responseData != null) {
-      
-      int ex = (responseData['expires_in'] != null)? responseData['expires_in']:31622400;
+    if (responseData != null && responseData['status'] == 'success') {
+      globResult = ResponseApi.fromJson(responseData);
+      int ex = (responseData['accessTokenExpiration'] != null)? responseData['accessTokenExpiration']:31622400;
     
       message = 'Authentication succeeded!';
       _authenticatedUser = User(
@@ -129,15 +129,16 @@ mixin UserModel on ConnectedModel {
       final DateTime now = DateTime.now();
       final DateTime expiryTime = now.add(Duration(seconds: ex));
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      Auth _authData = Auth(id: responseData['id'],name: email, accessToken: responseData['access_token'],refreshToken: responseData['refresh_token']);
-      dbHelper.insert(_authData);
+//      Auth _authData = Auth(id: responseData['id'],name: email, accessToken: responseData['access_token'],refreshToken: responseData['refresh_token']);
+//      dbHelper.insert(_authData);
       prefs.setString('token', responseData['access_token']);
-      prefs.setString('userEmail', email);
-      prefs.setString('userId', responseData['id']);
+//      prefs.setString('userEmail', email);
+//      prefs.setString('userId', responseData['id']);
       prefs.setString('expiryTime', expiryTime.toIso8601String());
+      setState(ViewState.Retrieved);
     }
-    
-    setState(ViewState.Retrieved);
+
+    setState(ViewState.Idle);
     notifyListeners();
     
     return globResult;
@@ -147,6 +148,7 @@ mixin UserModel on ConnectedModel {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token');
     final String expiryTimeString = prefs.getString('expiryTime');
+    // print("token : $token $expiryTimeString");
     if (token != null) {
       final DateTime now = DateTime.now();
       final parsedExpiryTime = DateTime.parse(expiryTimeString);
@@ -159,7 +161,10 @@ mixin UserModel on ConnectedModel {
       final int userId = int.parse(prefs.getString('userId'));
       final String name = prefs.getString('name');
       final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
+      print(userId);
+//      print("user id = $userId");
       _authenticatedUser = User(id: userId,name:name, email: userEmail, token: token);
+      // print(_authenticatedUser.toJson());r
       _userSubject.add(true);
       setAuthTimeout(tokenLifespan);
       notifyListeners();
@@ -167,14 +172,19 @@ mixin UserModel on ConnectedModel {
   }
 
   void logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     _authenticatedUser = null;
     _authTimer.cancel();
     _userSubject.add(false);
-    
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    dbHelper.truncate("auth");
+    print("deleting user ${_auth.id}");
+    _auth = null;
+
     prefs.remove('token');
     prefs.remove('userEmail');
     prefs.remove('userId');
+    prefs.remove('name');
+    prefs.clear();
   }
 
   void setAuthTimeout(int time) {
@@ -201,36 +211,49 @@ mixin UserModel on ConnectedModel {
 
   Future<ResponseApi> getUser() async{
 
+    try{
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String userEmail = prefs.getString('userEmail');
+      final String userId = prefs.getString('userId');
+      final String name = prefs.getString('name');
+      final String token = prefs.getString("token");
+      const url = "$apiURL/auth/user";
+//     _auth = await dbHelper.findOne('1');
+      print(token);
+      // print("Auth $_auth");
+      if(token != null){
+        Response response = await dio.get(url,
+            options: Options(
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ${token}'
+                }
+            )
+        );
+        print("status code ${response.statusCode}");
+        print(response.data);
+        if(response.statusCode == 200){
+          print(response.data);
+          Map map = json.decode(json.encode(response.data));
+          map['data']['access_token'] = token;
+          ResponseApi ra = ResponseApi.fromJson(map);
+          _authenticatedUser = User.fromJson(ra.data);
 
-    const url = "$apiURL/auth/user";
-    var dt = await dbHelper.findOne('1');
-    
-    
-    Response response = await dio.get(url,
-      options: Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${dt.accessToken}'
+          if(userEmail == null && userId == null && name == null){
+            prefs.setString("userId", ra.data.id);
+            prefs.setString("userEmail", ra.data.email);
+            prefs.setString("name", ra.data.name);
+          }
+          notifyListeners();
+          return ra;
         }
-      )
-    );
-    print("status code ${response.statusCode}");
-      print(response.data);
-    if(response.statusCode == 200){
-      Map map = json.decode(json.encode(response.data));
-      map['data']['access_token'] = dt.accessToken;
-      ResponseApi ra = ResponseApi.fromJson(map);
-      
-      // print(ra.data);
-      _authenticatedUser = User.fromJson(ra.data);
-      // _authenticatedUser.name = ra.data.name;
-      // _authenticatedUser.email = ra.data.email;
-      // _authenticatedUser.phonenumber = ra.data.phonenumber;
-      // _authenticatedUser.metas = ra.data.meta;
-      notifyListeners();
-      return ra;
+        return ResponseApi(code: 400,message: message,data: null,status: 'error');
+      }
+    }catch (e){
+      return ResponseApi.errorJson();
     }
-    return ResponseApi(code: 400,message: message,data: null,status: 'error');
+
+
   }
 
   Future<void> updateLocation() async{
@@ -264,7 +287,7 @@ mixin UserModel on ConnectedModel {
 mixin OrderModel on ConnectedModel{
   List<Order> history;
   Order currentOrder; 
-  bool statusOrder = false;
+  bool isOrdered = false;
   Future<void> getHistoryUser()async{
     Response response = await dio.post(ResourceLink.getHistoryBookingUser,
       options: Options(
@@ -281,8 +304,9 @@ mixin OrderModel on ConnectedModel{
 
   }
 
-  Future<void> changeStatusOrder(FormData data) async {
+  Future<ResponseApi> changeStatusOrder(FormData data) async {
     Response response = await dio.post(ResourceLink.postUpdateOrderStatus,
+    data: data,
       options: Options(
             headers: {
               'Content-Type': 'application/json',
@@ -290,8 +314,11 @@ mixin OrderModel on ConnectedModel{
             }
         )
     );
-    print(response.statusCode);
-    print(response.data);
+    ResponseApi ra = ResponseApi.fromJson(response.data);
+    notifyListeners();
+    // print(response.statusCode);
+    // print(response.data);
+    return ra;
   }
   Future<void> checkOrder() async {
     try {
@@ -306,14 +333,17 @@ mixin OrderModel on ConnectedModel{
               }
           )
       );
-      
+      print(response.data);
       var ra = ResponseApi.fromJson(response.data);
-      setState(ViewState.Idle);
+      print("ra ${ra.data}");
+      setState(ViewState.Busy);
       if(ra.code == 200 && ra.status == 'success'){
-        statusOrder = true;
+        isOrdered = true;
         currentOrder = Order.fromJson(ra.data);
         print(currentOrder.orderCode);
+        setState(ViewState.Retrieved);
       }
+      setState(ViewState.Idle);
       notifyListeners();
     } catch (e) {
       print(e);

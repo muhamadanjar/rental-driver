@@ -15,6 +15,15 @@ class ResponseApi {
     );
   }
 
+  factory ResponseApi.errorJson(){
+    return ResponseApi(
+      status: 'error',
+      message: 'System Error',
+      data: null,
+      code: 500
+    );
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
