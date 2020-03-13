@@ -5,7 +5,6 @@ import 'package:driver/models/order.dart';
 import 'package:driver/models/responseapi.dart';
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/themes/styles.dart';
-import 'package:driver/ui/widgets/card_order.dart';
 import 'package:driver/ui/widgets/ui_elements/driverMap.dart';
 import 'package:driver/utils/sizedconfig.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +20,6 @@ class DetilOrder extends StatefulWidget {
 class _DetilOrderState extends State<DetilOrder> {
   LocationData _startLocation;
   LocationData _currentLocation;
-
   Location _locationService = new Location();
 
   StreamSubscription<LocationData> _locationSubscription;
@@ -63,8 +61,11 @@ class _DetilOrderState extends State<DetilOrder> {
                     padding: EdgeInsets.only(left: 16, top: 18, bottom: 0),
                     child: Column(
                       children: <Widget>[
+                        ListTile(
+                          leading: Text("${model.currentOrder.orderCode}"),
+                        ),
                         Text("${_currentLocation.latitude.toString()} ${_currentLocation.longitude.toString()}"),
-                        Text("${model.currentOrder.orderStatus}"),
+
                         MaterialButton(
                           color: primaryColor,
                           onPressed: (){
@@ -180,6 +181,8 @@ class _DetilOrderState extends State<DetilOrder> {
     FormData fm = new FormData();
     fm.fields.add(MapEntry('order_id',current));
     fm.fields.add(MapEntry('status',status));
+    print(current);
+    print(status);
     ResponseApi response = await change(fm);
     print(response.message);
   }
@@ -187,7 +190,7 @@ class _DetilOrderState extends State<DetilOrder> {
   onCancelOrder(Function change) async{
     FormData fm = new FormData();
     fm.fields.add(MapEntry('order_id',curOrderId));
-    fm.fields.add(MapEntry('status',Order.STATUS_CANCEL));
+    fm.fields.add(MapEntry('status',Order.statusCANCEL));
     ResponseApi response = await change(fm);
     print(response.status);
   }

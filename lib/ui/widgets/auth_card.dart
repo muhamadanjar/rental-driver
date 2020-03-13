@@ -125,7 +125,7 @@ class _AuthCardState extends State<AuthCard>
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'E-Mail'),
+                  decoration: InputDecoration(labelText: 'Username'),
                   keyboardType: TextInputType.emailAddress,
                   // validator: (value) {
                   //   return new Validations().validateEmail(value);

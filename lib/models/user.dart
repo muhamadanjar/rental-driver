@@ -10,7 +10,7 @@ class User {
   String email;
   String phonenumber;
   String token;
-  String refreshToken;
+  // String refreshToken;
   String file;
   
   List<UserMeta> metas;
@@ -18,7 +18,7 @@ class User {
   UserNotification userNotification;
   UserMobil mobil;
 
-  User({@required this.id, this.email = "email",this.name = 'User',this.phonenumber = "0",this.token,this.refreshToken,this.file,this.metas,this.account,this.userNotification,this.mobil});
+  User({@required this.id, this.email = "email",this.name = 'User',this.phonenumber = "0",this.token,this.file,this.metas,this.account,this.userNotification,this.mobil});
   factory User.fromJson(Map<String, dynamic> json) {
     List<UserMeta> usermetas = new List<UserMeta>();
     if (json['meta'] != null) {
@@ -32,10 +32,10 @@ class User {
         name: json['name'],
         email: json['email'],
         token: json['access_token'],
-        refreshToken: json['refresh_token'],
+        // refreshToken: json['refresh_token'],
         file: json['file'],
-        account: json['account'] != null ? new UserSaldo.fromJson(json['account']) : null,
-        metas: usermetas,
+        // account: json['account'] != null ? new UserSaldo.fromJson(json['account']) : null,
+        // metas: usermetas,
     );
   }
   

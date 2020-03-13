@@ -24,7 +24,7 @@ class _HistoryPageState extends State<HistoryPage> {
               return FutureBuilder(
                 future: model.getHistoryUser(),
                 builder:(BuildContext context,AsyncSnapshot snapshot) {
-                  print(snapshot);
+                  
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                       return Container(
@@ -55,7 +55,6 @@ class _HistoryPageState extends State<HistoryPage> {
                           onRefresh: onRefreshAction,
                           child: ListView(
                             shrinkWrap: true,
-
                             children: <Widget>[
                               Container(
                                 alignment: Alignment.center,
@@ -69,11 +68,12 @@ class _HistoryPageState extends State<HistoryPage> {
                       }else {
                         return ListView.builder(
                             shrinkWrap: true,
-                            itemCount: model.history.length,
+                            itemCount: snapshot.data.length,
                             physics: ClampingScrollPhysics(),
                             scrollDirection: Axis.vertical,
                             itemBuilder: (context, index) {
-                              return HisCard(hisDetails: model.history[index]);
+                              // return Text(snapshot.data[index].orderId.toString());
+                              return HisCard(hisDetails: snapshot.data[index]);
                             }
                         );
                       }

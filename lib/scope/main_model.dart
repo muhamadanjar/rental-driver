@@ -8,6 +8,7 @@ import 'package:driver/models/order.dart';
 import 'package:driver/models/responseapi.dart';
 import 'package:driver/models/user.dart';
 import 'package:driver/models/user_notification.dart';
+import 'package:driver/models/user_saldo.dart';
 import 'package:driver/models/viewstate.dart';
 import 'package:driver/utils/api_provider.dart';
 import 'package:driver/utils/dbhelper.dart';
@@ -21,6 +22,7 @@ mixin ConnectedModel on Model {
   ResponseApi globResult = new ResponseApi();
   ApiProvider _apiProvider =  new ApiProvider(); 
   User _authenticatedUser;
+  UserSaldo _userAccount;
   Auth _auth;
   String message = 'Something went wrong.';
   Dio dio = new Dio();
@@ -73,6 +75,10 @@ mixin UserModel on ConnectedModel {
   Future<List<UserNotification>> get getDataNotifFromApi => _apiProvider.getUserNotification(_authenticatedUser.token); 
   User get user {
     return _authenticatedUser;
+  }
+
+  UserSaldo get account{
+    return _userAccount;
   }
 
   PublishSubject<bool> get userSubject {
@@ -133,7 +139,7 @@ mixin UserModel on ConnectedModel {
 //      dbHelper.insert(_authData);
       prefs.setString('token', responseData['access_token']);
 //      prefs.setString('userEmail', email);
-//      prefs.setString('userId', responseData['id']);
+      prefs.setString('userId', responseData['id'].toString());
       prefs.setString('expiryTime', expiryTime.toIso8601String());
       setState(ViewState.Retrieved);
     }
@@ -158,12 +164,12 @@ mixin UserModel on ConnectedModel {
         return;
       }
       final String userEmail = prefs.getString('userEmail');
-      final int userId = int.parse(prefs.getString('userId'));
+      final String userId = prefs.getString('userId');
       final String name = prefs.getString('name');
       final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
       print(userId);
 //      print("user id = $userId");
-      _authenticatedUser = User(id: userId,name:name, email: userEmail, token: token);
+      _authenticatedUser = User(id: int.parse(userId),name:name, email: userEmail, token: token);
       // print(_authenticatedUser.toJson());r
       _userSubject.add(true);
       setAuthTimeout(tokenLifespan);
@@ -177,14 +183,14 @@ mixin UserModel on ConnectedModel {
     _authTimer.cancel();
     _userSubject.add(false);
     dbHelper.truncate("auth");
-    print("deleting user ${_auth.id}");
+    // print("deleting user ${_auth.id}");
     _auth = null;
 
     prefs.remove('token');
     prefs.remove('userEmail');
     prefs.remove('userId');
     prefs.remove('name');
-    prefs.clear();
+    // prefs.clear();
   }
 
   void setAuthTimeout(int time) {
@@ -209,7 +215,7 @@ mixin UserModel on ConnectedModel {
 
   }
 
-  Future<ResponseApi> getUser() async{
+  void getUser() async{
 
     try{
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -219,7 +225,7 @@ mixin UserModel on ConnectedModel {
       final String token = prefs.getString("token");
       const url = "$apiURL/auth/user";
 //     _auth = await dbHelper.findOne('1');
-      print(token);
+      // print(token);
       // print("Auth $_auth");
       if(token != null){
         Response response = await dio.get(url,
@@ -231,26 +237,37 @@ mixin UserModel on ConnectedModel {
             )
         );
         print("status code ${response.statusCode}");
-        print(response.data);
+        // print(response.data);
         if(response.statusCode == 200){
-          print(response.data);
+          // print(response.data);
           Map map = json.decode(json.encode(response.data));
           map['data']['access_token'] = token;
+          print(map['code']);
           ResponseApi ra = ResponseApi.fromJson(map);
           _authenticatedUser = User.fromJson(ra.data);
-
-          if(userEmail == null && userId == null && name == null){
-            prefs.setString("userId", ra.data.id);
-            prefs.setString("userEmail", ra.data.email);
-            prefs.setString("name", ra.data.name);
+          _userAccount = UserSaldo.fromJson(map['data']['account']);
+          print("akun ${_userAccount.saldo}");
+          // print("Response api ${ra.data['id']}");
+          // print("email $userEmail");
+          // print("name $name");
+          // print("user id $userId");
+          // print(_authenticatedUser.account);
+          if(userId == null){
+            // print("userId = ${map['data']['id']}");
+            prefs.setString("userId", ra.data['id'].toString());
+            prefs.setString("userEmail", ra.data['email']);
+            prefs.setString("name", ra.data['name']);
+          // print("current userid ${prefs.getString('name')}");
           }
           notifyListeners();
-          return ra;
+          // return ra;
         }
-        return ResponseApi(code: 400,message: message,data: null,status: 'error');
+        // return ResponseApi(code: 400,message: message,data: null,status: 'error');
       }
+      // return ResponseApi.errorJson();
     }catch (e){
-      return ResponseApi.errorJson();
+      // throw new Exception(e);
+      // return ResponseApi.errorJson();
     }
 
 
@@ -288,7 +305,7 @@ mixin OrderModel on ConnectedModel{
   List<Order> history;
   Order currentOrder; 
   bool isOrdered = false;
-  Future<void> getHistoryUser()async{
+  Future getHistoryUser()async{
     Response response = await dio.post(ResourceLink.getHistoryBookingUser,
       options: Options(
         headers: {
@@ -297,15 +314,19 @@ mixin OrderModel on ConnectedModel{
         }
       )
     );
-    print(response.data);
-    ResponseApi ra =  ResponseApi.fromJson(response.data);
-    history =  ra.data;
-    notifyListeners();
-
+    final body = ResponseApi.fromJson(response.data);    
+    final List rawData = jsonDecode(jsonEncode(body.data));
+    // print(rawData);
+    List<Order> list = rawData.map((f) => Order.fromJson(f)).toList();
+    // history = list;
+    // notifyListeners();
+    return list;
   }
 
   Future<ResponseApi> changeStatusOrder(FormData data) async {
-    Response response = await dio.post(ResourceLink.postUpdateOrderStatus,
+    final String url = ResourceLink.postUpdateOrderStatus;
+    print(url);
+    Response response = await dio.post(url,
     data: data,
       options: Options(
             headers: {
@@ -315,9 +336,8 @@ mixin OrderModel on ConnectedModel{
         )
     );
     ResponseApi ra = ResponseApi.fromJson(response.data);
+    currentOrder = Order.fromJson(ra.data);
     notifyListeners();
-    // print(response.statusCode);
-    // print(response.data);
     return ra;
   }
   Future<void> checkOrder() async {

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:driver/scope/main_model.dart';
-import 'package:driver/ui/pages/accessToken.dart';
 import 'package:driver/ui/pages/profile.dart';
 import 'package:driver/ui/themes/styles.dart';
 import 'package:flutter/material.dart';

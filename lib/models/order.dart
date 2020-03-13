@@ -19,10 +19,21 @@ class Order {
   String _createdBy;
   String _updatedBy;
 
-  static final String STATUS_PENDING = '0';
-  static final String STATUS_COMPLETE = '4';
-  static final String STATUS_CANCEL = '5';
-  static final String STATUS_DECLINE = '6';
+  static final String statusPENDING = '0';
+  static final String statusACCEPT = '1';
+  static final String statusOTW = '2';
+  static final String statusINSTRANSIT = '3';
+  static final String statusCOMPLETE = '4';
+  static final String statusCANCEL = '5';
+  static final String statusDECLINE = '6';
+
+  static final String stringPending = 'Pending';
+  static final String stringAccept = 'Terima';
+  static final String stringOtw = 'Jemput';
+  static final String stringIntransit = 'Transit';
+  static final String stringDone = 'Selesai';
+  static final String stringCancel = 'Batalkan';
+  static final String stringDecline = 'Tolak';
 
   Order(
       {int orderId,
@@ -66,74 +77,78 @@ class Order {
   }
 
   int get orderId => _orderId;
-  set orderId(int orderId) => _orderId = orderId;
+  set setOrderId(int orderId) => _orderId = orderId;
   String get orderCode => _orderCode;
-  set orderCode(String orderCode) => _orderCode = orderCode;
+  set setOrderCode(String orderCode) => _orderCode = orderCode;
   int get orderUserId => _orderUserId;
-  set orderUserId(int orderUserId) => _orderUserId = orderUserId;
+  set setOrderUserId(int orderUserId) => _orderUserId = orderUserId;
   String get orderAddressOrigin => _orderAddressOrigin;
-  set orderAddressOrigin(String orderAddressOrigin) =>
+  set setOrderAddressOrigin(String orderAddressOrigin) =>
       _orderAddressOrigin = orderAddressOrigin;
   String get orderAddressOriginLat => _orderAddressOriginLat;
-  set orderAddressOriginLat(String orderAddressOriginLat) =>
+  set setOrderAddressOriginLat(String orderAddressOriginLat) =>
       _orderAddressOriginLat = orderAddressOriginLat;
   String get orderAddressOriginLng => _orderAddressOriginLng;
-  set orderAddressOriginLng(String orderAddressOriginLng) =>
+  set setorderAddressOriginLng(String orderAddressOriginLng) =>
       _orderAddressOriginLng = orderAddressOriginLng;
   String get orderAddressDestination => _orderAddressDestination;
-  set orderAddressDestination(String orderAddressDestination) =>
+  set setOrderAddressDestination(String orderAddressDestination) =>
       _orderAddressDestination = orderAddressDestination;
   String get orderAddressDestinationLat => _orderAddressDestinationLat;
-  set orderAddressDestinationLat(String orderAddressDestinationLat) =>
+  set setOrderAddressDestinationLat(String orderAddressDestinationLat) =>
       _orderAddressDestinationLat = orderAddressDestinationLat;
   String get orderAddressDestinationLng => _orderAddressDestinationLng;
-  set orderAddressDestinationLng(String orderAddressDestinationLng) =>
+  set setOrderAddressDestinationLng(String orderAddressDestinationLng) =>
       _orderAddressDestinationLng = orderAddressDestinationLng;
   int get orderDriverId => _orderDriverId;
-  set orderDriverId(int orderDriverId) => _orderDriverId = orderDriverId;
+  set setOrderDriverId(int orderDriverId) => _orderDriverId = orderDriverId;
   String get orderJenis => _orderJenis;
-  set orderJenis(String orderJenis) => _orderJenis = orderJenis;
+  set setOrderJenis(String orderJenis) => _orderJenis = orderJenis;
   int get orderNominal => _orderNominal;
-  set orderNominal(int orderNominal) => _orderNominal = orderNominal;
+  set setOrderNominal(int orderNominal) => _orderNominal = orderNominal;
   String get orderTglPesanan => _orderTglPesanan;
-  set orderTglPesanan(String orderTglPesanan) =>
+  set setOrderTglPesanan(String orderTglPesanan) =>
       _orderTglPesanan = orderTglPesanan;
   String get orderWaktuJemput => _orderWaktuJemput;
-  set orderWaktuJemput(String orderWaktuJemput) =>
+  set setOrderWaktuJemput(String orderWaktuJemput) =>
       _orderWaktuJemput = orderWaktuJemput;
   String get orderWaktuBerakhir => _orderWaktuBerakhir;
-  set orderWaktuBerakhir(String orderWaktuBerakhir) =>
+  set setOrderWaktuBerakhir(String orderWaktuBerakhir) =>
       _orderWaktuBerakhir = orderWaktuBerakhir;
   String get orderKeterangan => _orderKeterangan;
-  set orderKeterangan(String orderKeterangan) =>
+  set setOrderKeterangan(String orderKeterangan) =>
       _orderKeterangan = orderKeterangan;
   int get orderStatus => _orderStatus;
-  set orderStatus(int orderStatus) => _orderStatus = orderStatus;
+  set setOrderStatus(int orderStatus) => _orderStatus = orderStatus;
   String get createdBy => _createdBy;
-  set createdBy(String createdBy) => _createdBy = createdBy;
+  set setCreatedBy(String createdBy) => _createdBy = createdBy;
   String get updatedBy => _updatedBy;
-  set updatedBy(String updatedBy) => _updatedBy = updatedBy;
+  set setUpdatedBy(String updatedBy) => _updatedBy = updatedBy;
 
-  Order.fromJson(Map<String, dynamic> json) {
-    _orderId = json['order_id'];
-    _orderCode = json['order_code'];
-    _orderUserId = json['order_user_id'];
-    _orderAddressOrigin = json['order_address_origin'];
-    _orderAddressOriginLat = json['order_address_origin_lat'];
-    _orderAddressOriginLng = json['order_address_origin_lng'];
-    _orderAddressDestination = json['order_address_destination'];
-    _orderAddressDestinationLat = json['order_address_destination_lat'];
-    _orderAddressDestinationLng = json['order_address_destination_lng'];
-    _orderDriverId = json['order_driver_id'];
-    _orderJenis = json['order_jenis'];
-    _orderNominal = json['order_nominal'];
-    _orderTglPesanan = json['order_tgl_pesanan'];
-    _orderWaktuJemput = json['order_waktu_jemput'];
-    _orderWaktuBerakhir = json['order_waktu_berakhir'];
-    _orderKeterangan = json['order_keterangan'];
-    _orderStatus = json['order_status'];
-    _createdBy = json['created_by'];
-    _updatedBy = json['updated_by'];
+  factory Order.fromJson(Map<String, dynamic> json) {
+//    _orderJenis = json['order_jenis'];
+//    _orderNominal = json['order_nominal'];
+//    _orderTglPesanan = json['order_tgl_pesanan'];
+//    _orderWaktuJemput = json['order_waktu_jemput'];
+//    _orderWaktuBerakhir = json['order_waktu_berakhir'];
+//    _orderKeterangan = json['order_keterangan'];
+//    _orderStatus = json['order_status'];
+//    _createdBy = json['created_by'];
+//    _updatedBy = json['updated_by'];
+    return Order(
+        orderId: json['order_id'],
+        orderCode: json['order_code'],
+        orderUserId: json['order_user_id'],
+        orderAddressOrigin: json['order_address_origin'],
+        orderAddressOriginLat: json['order_address_origin_lat'],
+        orderAddressOriginLng: json['order_address_origin_lng'],
+        orderAddressDestination: json['order_address_destination'],
+        orderAddressDestinationLat: json['order_address_destination_lat'],
+        orderAddressDestinationLng: json['order_address_destination_lng'],
+        orderDriverId: json['order_driver_id'],
+        orderStatus: int.parse(json['order_status']),
+
+    );
   }
 
   Map<String, dynamic> toJson() {

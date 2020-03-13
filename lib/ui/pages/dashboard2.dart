@@ -2,10 +2,12 @@ import 'package:driver/models/responseapi.dart';
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/pages/detil_order.dart';
 import 'package:driver/ui/pages/history.dart';
+import 'package:driver/ui/pages/product.dart';
 import 'package:driver/ui/pages/profile.dart';
 import 'package:driver/ui/pages/request_saldo.dart';
 import 'package:driver/ui/pages/setting.dart';
 import 'package:driver/ui/widgets/ui_elements/chart.dart';
+import 'package:driver/ui/widgets/ui_elements/dashboard/top_account_info.dart';
 import 'package:driver/utils/rental.dart';
 import 'package:flutter/material.dart';
 
@@ -43,24 +45,26 @@ class _DashboardTwoPageState extends State<DashboardTwoPage> {
           onRefresh:() => _handleRefresh(model.getUser),
             child: CustomScrollView(
             slivers: <Widget>[
-              _buildStats(),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: _buildTitledContainer("Pemesanan",
-                    child: ScopedModelDescendant<MainModel>(
-                      builder: (BuildContext context,Widget child,MainModel model){
-                        return Container(
-                          height: 290,
-                          child: PieChartSample2(),
-                        );
-                      }
+              // TopAccountInfo(),
+              
+              // _buildStats(),
+              // SliverToBoxAdapter(
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(16.0),
+              //     child: _buildTitledContainer("Pemesanan",
+              //       child: ScopedModelDescendant<MainModel>(
+              //         builder: (BuildContext context,Widget child,MainModel model){
+              //           return Container(
+              //             height: 290,
+              //             child: PieChartSample2(),
+              //           );
+              //         }
 
-                    )
-                  ),
-                ),
-              ),
-              _buildActivities(context),
+              //       )
+              //     ),
+              //   ),
+              // ),
+              // _buildActivities(context),
             ],
           ),
         );
@@ -154,6 +158,8 @@ class _DashboardTwoPageState extends State<DashboardTwoPage> {
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>HistoryPage()));
                         }else if(activity.title == 'Pengaturan'){
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>SettingPage()));
+                        }else if(activity.title == 'Product'){
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>ProductScreen()));
                         }else{
                           Navigator.push(context, MaterialPageRoute(builder: (_)=>SettingPage()));
                         }
@@ -291,9 +297,10 @@ class _DashboardTwoPageState extends State<DashboardTwoPage> {
   Future<Null> _handleRefresh(Function func) async {
     await new Future.delayed(new Duration(seconds: 3));
     try {
-      
       ResponseApi responseApi = await func();
-      print(responseApi);
+      // if (responseApi.code != 200) {
+      //   Scaffold.of(context).showSnackBar(SnackBar(content: Text(responseApi.message),))
+      // }
     } catch (e) {
       print("error $e");
     }
@@ -315,4 +322,5 @@ final List<Activity> activities = [
   Activity(title: "Summary", icon: FontAwesomeIcons.fileAlt),
   Activity(title: "TopUp", icon: FontAwesomeIcons.dollarSign),
   Activity(title: "Pengaturan", icon: FontAwesomeIcons.cogs),
+  Activity(title: "Product", icon: FontAwesomeIcons.cogs),
 ];

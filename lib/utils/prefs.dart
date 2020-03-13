@@ -1,3 +1,5 @@
+import 'package:driver/models/transaction.dart';
+
 const bool devMode = false;
 const String apiURL = devMode == true ? "http://172.16.1.234/api":"http://utama-trans.com/new/api";
 const double textScaleFactor = 1.0;
@@ -56,5 +58,79 @@ class ResourceLink{
 
   static final getHistoryBookingUser = baseUri + "/users/booking/history";
   static final getDriverStatusOrder = baseUri + "/driver/booking/active";
-  static final postUpdateOrderStatus = baseUri + "/booking/update-status";
+  static final postUpdateOrderStatus = baseUri + "/driver/booking/update-status";
 }
+
+final String path = 'assets/images/';
+
+final List categories = [
+  {'id':'akun','image': path + 'flutter.png', 'title': 'Akun Ku'},
+  {'id':'transaksi','image': path + 'flutter.png', 'title': 'Transaksi Aktif'},
+  {'id':'payment','image': path + 'flutter.png', 'title': 'Payment'},
+  {'id':'transfer','image': path + 'flutter.png', 'title': 'Transfer'},
+  
+];
+
+final List transactions = [
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '10,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '11,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '12,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '13,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '14,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '15,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '16,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '55,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '15,000.00',
+    date: '10-06-2019',
+  ),
+  Trx(
+    type: 'cwdr/',
+    number: '974884/9874513365478965',
+    amount: '25,000.00',
+    date: '10-06-2019',
+  ),
+];
+
