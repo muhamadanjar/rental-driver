@@ -1,3 +1,4 @@
+import 'package:driver/scope/main_model.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -5,8 +6,9 @@ import 'package:scoped_model/scoped_model.dart';
 class BaseView<T extends Model> extends StatefulWidget {
   final ScopedModelDescendantBuilder<T> _builder;
   final Function(T) onModelReady;
+  final Model model;
 
-  BaseView({ScopedModelDescendantBuilder<T> builder, this.onModelReady})
+  BaseView({ScopedModelDescendantBuilder<T> builder, this.onModelReady,this.model})
       : _builder = builder;
 
   @override
@@ -14,22 +16,19 @@ class BaseView<T extends Model> extends StatefulWidget {
 }
 
 class _BaseViewState<T extends Model> extends State<BaseView<T>> {
-  T _model;
 
   @override
   void initState() {
     if(widget.onModelReady != null) {
-      widget.onModelReady(_model);
+      widget.onModelReady(widget.model);
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<T>(
-        model: _model, 
-        child: ScopedModelDescendant<T>(
+    return ScopedModelDescendant<T>(
           child: Container(color: Colors.red),
-          builder: widget._builder));
+          builder: widget._builder);
   }
 }

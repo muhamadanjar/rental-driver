@@ -1,4 +1,3 @@
-import 'package:driver/models/responseapi.dart';
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/themes/styles.dart';
 import 'package:driver/ui/widgets/ui_elements/dashboard/categories.dart';
@@ -84,9 +83,9 @@ class Dashboard3 extends StatelessWidget {
       ],
     );
   }
-  Future onRefresh(MainModel onGenerate) async{
+  Future onRefresh(MainModel onGenerate){
     try {
-      var res = await onGenerate.getUser();  
+      onGenerate.getUser();  
       
       return Future.delayed(Duration(seconds: 5));
     } catch (e) {

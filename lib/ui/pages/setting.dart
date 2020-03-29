@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/themes/styles.dart';
+import 'package:driver/ui/views/base_view.dart';
 import 'package:driver/ui/views/view_ubahpass.dart';
 import 'package:driver/ui/widgets/ui_elements/logout_list_tile.dart';
 import 'package:driver/utils/prefs.dart';
@@ -34,11 +35,11 @@ class SettingPage extends StatelessWidget {
               ),
               child: Column(
                 children: <Widget>[
-                  ScopedModelDescendant<MainModel>(
+                  BaseView<MainModel>(
                     builder:(BuildContext context,Widget child,MainModel model) {
                       String email = model.user != null ? model.user.email : 'User Driver';
                       String noAnggota = model.user != null ? (model.user.account != null ? (model.user.account.noAnggota != null ? model.user.account.noAnggota:'No Anggota') :'No Anggota') :'No Anggota';
-                      print(model.user.account.noAnggota);
+                      
                     return ListTile(
                       leading: CircleAvatar(
                         backgroundImage: CachedNetworkImageProvider(defaultImage),

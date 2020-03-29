@@ -23,7 +23,6 @@ mixin ConnectedModel on Model {
   ApiProvider _apiProvider =  new ApiProvider(); 
   User _authenticatedUser;
   UserSaldo _userAccount;
-  Auth _auth;
   String message = 'Something went wrong.';
   Dio dio = new Dio();
   
@@ -67,7 +66,6 @@ mixin RequestSaldo on ConnectedModel{
     return {'success': !hasError, 'message': message};
   } 
 }
-
 mixin UserModel on ConnectedModel {
   Timer _authTimer;
   PublishSubject<bool> _userSubject = PublishSubject();
@@ -118,7 +116,7 @@ mixin UserModel on ConnectedModel {
     
     final Map<String, dynamic> responseData = json.decode(json.encode(response.data));
     print("response $responseData['access_token]");
-    
+    globResult = ResponseApi.errorJson();
     if (responseData != null && responseData['status'] == 'success') {
       globResult = ResponseApi.fromJson(responseData);
       int ex = (responseData['accessTokenExpiration'] != null)? responseData['accessTokenExpiration']:31622400;
@@ -184,7 +182,6 @@ mixin UserModel on ConnectedModel {
     _userSubject.add(false);
     dbHelper.truncate("auth");
     // print("deleting user ${_auth.id}");
-    _auth = null;
 
     prefs.remove('token');
     prefs.remove('userEmail');
@@ -197,6 +194,14 @@ mixin UserModel on ConnectedModel {
     _authTimer = Timer(Duration(seconds: time), logout);
   }
 
+  Future<String> getToken() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token");
+    if(token != null){
+      return token;
+    }
+    logout();
+  }
   Future<ResponseApi> getUserNotifikasi() async{
     Response response = await dio.get("$apiURL/user-notifiacations",
       options: Options(
@@ -224,9 +229,7 @@ mixin UserModel on ConnectedModel {
       final String name = prefs.getString('name');
       final String token = prefs.getString("token");
       const url = "$apiURL/auth/user";
-//     _auth = await dbHelper.findOne('1');
-      // print(token);
-      // print("Auth $_auth");
+      print(token);
       if(token != null){
         Response response = await dio.get(url,
             options: Options(
@@ -241,22 +244,23 @@ mixin UserModel on ConnectedModel {
         if(response.statusCode == 200){
           // print(response.data);
           Map map = json.decode(json.encode(response.data));
+          print(map);
           map['data']['access_token'] = token;
-          print(map['code']);
+          print("statuscode ${map['code']}");
           ResponseApi ra = ResponseApi.fromJson(map);
           _authenticatedUser = User.fromJson(ra.data);
           _userAccount = UserSaldo.fromJson(map['data']['account']);
           print("akun ${_userAccount.saldo}");
-          // print("Response api ${ra.data['id']}");
+          print("Response api ${ra.data}");
           // print("email $userEmail");
           // print("name $name");
           // print("user id $userId");
           // print(_authenticatedUser.account);
           if(userId == null){
             // print("userId = ${map['data']['id']}");
-            prefs.setString("userId", ra.data['id'].toString());
-            prefs.setString("userEmail", ra.data['email']);
-            prefs.setString("name", ra.data['name']);
+            prefs.setString("userId", map['data']['id'].toString());
+            prefs.setString("userEmail", map['data']['email']);
+            prefs.setString("name", map['data']['name']);
           // print("current userid ${prefs.getString('name')}");
           }
           notifyListeners();
@@ -266,7 +270,7 @@ mixin UserModel on ConnectedModel {
       }
       // return ResponseApi.errorJson();
     }catch (e){
-      // throw new Exception(e);
+      throw new Exception(e);
       // return ResponseApi.errorJson();
     }
 
@@ -300,9 +304,9 @@ mixin UserModel on ConnectedModel {
 
 
 }
-
 mixin OrderModel on ConnectedModel{
   List<Order> history;
+  List transactions;
   Order currentOrder; 
   bool isOrdered = false;
   Future getHistoryUser()async{
@@ -371,5 +375,16 @@ mixin OrderModel on ConnectedModel{
     
 
   }
+  void getLastTransaksi() async{
+
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString("token");
+      var list = await _apiProvider.getUserTransaksi(token);
+      print(list);
+    } catch (e) {
+    }
+  }
 }
-mixin UtilityModel on ConnectedModel {}
+mixin UtilityModel on ConnectedModel {
+}

@@ -1,4 +1,6 @@
 import 'package:driver/scope/main_model.dart';
+import 'package:driver/ui/views/base_view.dart';
+import 'package:driver/ui/widgets/ui_elements/logout_list_tile.dart';
 import 'package:driver/utils/rental.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -79,7 +81,7 @@ class ProfilePage extends StatelessWidget {
 
                   ],
                 ),
-
+                LogoutListTile()
               ],
             ),
           ),
@@ -89,9 +91,10 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget _buildInfo(BuildContext context){
-    return ScopedModelDescendant<MainModel>(
+    return BaseView<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model){
-        String saldo = model.user != null ? (model.user.account != null ? model.user.account.saldo.toString() : '0' ):'0';
+        String saldo = model.account.saldo.toString();
+        String name = model.user.name;
         return Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
             child: Row(
@@ -100,7 +103,7 @@ class ProfilePage extends StatelessWidget {
                 Column(
                   children: <Widget>[
                     Text(
-                      model.user != null ? model.user.email :'DriverName',
+                      name,
                       style: TextStyle(
                         fontSize: 18,
                       ),
@@ -109,7 +112,7 @@ class ProfilePage extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      "Trips",
+                      "Username",
                       style:TextStyle(color: Colors.grey, fontSize: 16),
                     ),
                   ],
@@ -123,7 +126,7 @@ class ProfilePage extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: (){
-                    // Navigator.pushNamed(context, RoutePaths.Topup);
+                    
                   },
                   child: Column(
                     children: <Widget>[

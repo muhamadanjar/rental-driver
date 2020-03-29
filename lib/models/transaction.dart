@@ -3,7 +3,7 @@ class Trx {
   Trx({this.type, this.amount, this.date, this.number});
 
   factory Trx.fromJson(Map<String,dynamic>json){
-    return Trx(type: json['type'],number: json['number'],amount: json['amout'],date: json['date']);
+    return Trx(type: json['kode_transaksi'],number: json['nomor_transaksi'],amount: json['nominal'],date: json['date']);
   }
 
   Map<String,dynamic> toJson(){

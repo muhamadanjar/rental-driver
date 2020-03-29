@@ -1,7 +1,7 @@
 import 'package:driver/models/transaction.dart';
 
-const bool devMode = false;
-const String apiURL = devMode == true ? "http://172.16.1.234/api":"http://utama-trans.com/new/api";
+const bool devMode = true;
+const String apiURL = devMode == true ? "http://192.168.43.110/api":"http://utama-trans.com/new/api";
 const double textScaleFactor = 1.0;
 const google_android_api = 'AIzaSyAKl4qWeBABIDPoxo_CHvWuIfgkKoEzS7c';
 const google_web_api = 'AIzaSyAyGT-CSg1nb0YBLihgn8vk9zfbbkk-f1c';
@@ -64,10 +64,11 @@ class ResourceLink{
 final String path = 'assets/images/';
 
 final List categories = [
-  {'id':'akun','image': path + 'flutter.png', 'title': 'Akun Ku'},
+  {'id':'akun','image': path + 'flutter.png', 'title': 'Akun'},
   {'id':'transaksi','image': path + 'flutter.png', 'title': 'Transaksi Aktif'},
   {'id':'payment','image': path + 'flutter.png', 'title': 'Payment'},
   {'id':'transfer','image': path + 'flutter.png', 'title': 'Transfer'},
+  {'id':'setting','image': path + 'flutter.png', 'title': 'Setting'},
   
 ];
 

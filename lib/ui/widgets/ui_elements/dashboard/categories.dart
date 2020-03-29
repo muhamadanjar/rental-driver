@@ -3,8 +3,6 @@ import 'package:driver/ui/pages/profile.dart';
 import 'package:driver/ui/pages/request_saldo.dart';
 import 'package:driver/ui/widgets/ui_elements/dashboard/category.dart';
 
-  
-
 import 'package:flutter/material.dart';
 
 import '../heading.dart';
@@ -46,10 +44,10 @@ class Categories extends StatelessWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfilePage()));
                     }
                   },
-                                  child: Category(
-                        title: item['title'],
-                        image: item['image'],
-                      ),
+                  child: Category(
+                    title: item['title'],
+                    image: item['image'],
+                  ),
                 ))
                 .toList(),
           ),

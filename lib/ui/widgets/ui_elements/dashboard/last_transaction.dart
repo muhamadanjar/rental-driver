@@ -1,4 +1,6 @@
   
+import 'package:driver/scope/main_model.dart';
+import 'package:driver/ui/views/base_view.dart';
 import 'package:driver/ui/widgets/ui_elements/transactions.dart';
 import 'package:driver/utils/prefs.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,16 +25,18 @@ class LastTransactions extends StatelessWidget {
         SizedBox(
           height: 25.0,
         ),
-        Flexible(
-          child: Container(
-            // color: Colors.red,
-            height: deviceSize.height * 0.3,
-            child: ListView.builder(
-              shrinkWrap: true,
-              // physics: NeverScrollableScrollPhysics(),
-              physics: BouncingScrollPhysics(),
-              itemCount: transactions.length,
-              itemBuilder: (context, int index) => Transaction(transaction: transactions[index],),
+        BaseView<MainModel>(
+          builder:(context,child,model) => Flexible(
+            child: Container(
+              // color: Colors.red,
+              height: deviceSize.height * 0.3,
+              child: ListView.builder(
+                shrinkWrap: true,
+                // physics: NeverScrollableScrollPhysics(),
+                physics: BouncingScrollPhysics(),
+                itemCount: model.transactions.length,
+                itemBuilder: (context, int index) => Transaction(transaction: model.transactions[index],),
+              ),
             ),
           ),
         ),
