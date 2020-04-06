@@ -19,6 +19,7 @@ class TopAccountInfo extends StatelessWidget {
       model: MainModel(),
       onModelReady: (MainModel model){
         model.getUser();
+        model.getLastTransaksi();
       },
       builder: (context, child, MainModel model){
         User _user = model.user;
@@ -66,7 +67,8 @@ class TopAccountInfo extends StatelessWidget {
   }
 
   Widget buildAcountDetail(User user,UserSaldo account){
-    print(account.toJson());
+    String saldo = account.saldo.toString() ?? '0';
+    String noAnggota = account.noAnggota ?? 'No Anggota';
     return Container(
       padding: EdgeInsets.only(
         left: 15.0,
@@ -90,8 +92,9 @@ class TopAccountInfo extends StatelessWidget {
               SizedBox(
                 width: 3.0,
               ),
+              
               Text(
-                RentalUtils.formatRupiah(account.saldo.toString()),
+                RentalUtils.formatRupiah(saldo),
                 style: TextStyle(
                   fontSize: 20.0,
                   color: secondaryColor,
@@ -114,7 +117,7 @@ class TopAccountInfo extends StatelessWidget {
             ],
           ),
           Text(
-            account.noAnggota.toString(),
+            noAnggota,
             style: TextStyle(
               fontSize: 15.0,
               color: Colors.black,

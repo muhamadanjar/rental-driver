@@ -22,11 +22,11 @@ class _ChangePasswordState extends State<ChangePassword> {
     return new Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.blue,
           elevation: 0.0,
           title:
-              Text("Ubah Password", style: Theme.of(context).textTheme.title),
+              Text("Ubah Password", style: TextStyle(color: Colors.white)),
         ),
         body: Container(
             padding: EdgeInsets.all(16.0),

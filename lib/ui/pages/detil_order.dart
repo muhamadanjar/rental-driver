@@ -5,6 +5,7 @@ import 'package:driver/models/order.dart';
 import 'package:driver/models/responseapi.dart';
 import 'package:driver/scope/main_model.dart';
 import 'package:driver/ui/themes/styles.dart';
+import 'package:driver/ui/views/base_view.dart';
 import 'package:driver/ui/widgets/ui_elements/driverMap.dart';
 import 'package:driver/utils/sizedconfig.dart';
 import 'package:flutter/material.dart';
@@ -40,66 +41,30 @@ class _DetilOrderState extends State<DetilOrder> {
         centerTitle: true,
       ),
       body: Container(
-
-        child: ScopedModelDescendant<MainModel>(
-          builder: (BuildContext context,Widget widget,MainModel model){
-
-            return model.isOrdered ? Stack(
-            children: <Widget>[
-                DriverMap(),
-                Positioned(
-                bottom: 0,
-                left: 10,
-                right: 10,
-                child: Card(
-                  elevation: 5.0,
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(color: Color(0xFFF27A08B)),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.only(left: 16, top: 18, bottom: 0),
-                    child: Column(
+        child: BaseView<MainModel>(
+            model: MainModel(),
+            builder: (BuildContext context, Widget widget, MainModel model) {
+              return model.isOrdered
+                  ? Stack(
                       children: <Widget>[
-                        ListTile(
-                          leading: Text("${model.currentOrder.orderCode}"),
-                        ),
-                        Text("${_currentLocation.latitude.toString()} ${_currentLocation.longitude.toString()}"),
-
-                        MaterialButton(
-                          color: primaryColor,
-                          onPressed: (){
-                            onChangeStatusOrder(model.changeStatusOrder);
-                            model.checkOrder();
-                          },
-                          child: Text("Jemput"),
-                        ),
-                        MaterialButton(
-                          color: Color(0xFFFFF0000),
-                          onPressed: (){
-                            onCancelOrder(model.changeStatusOrder);
-                          },
-                          child: Text("Batalkan"),
-                        )
-
+//                DriverMap(),
+                        Positioned(
+                            bottom: 0,
+                            left: 10,
+                            right: 10,
+                            child: _buildCard(model))
                       ],
-                    ),
-                  ),
-                )
-              )
-            ],
-          ):Card(
-            elevation: 8,
-            margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-            child: Container(
-              alignment: Alignment.center,
-              height: SizeConfig.blockHeight * 15,
-              child: Text("Tidak ada transaksi")
-              ),
-            );
-          }
-
-        ),
+                    )
+                  : Card(
+                      elevation: 8,
+                      margin: new EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 6.0),
+                      child: Container(
+                          alignment: Alignment.center,
+                          height: SizeConfig.blockHeight * 15,
+                          child: Text("Tidak ada transaksi")),
+                    );
+            }),
       ),
     );
   }
@@ -108,11 +73,11 @@ class _DetilOrderState extends State<DetilOrder> {
   void initState() {
     super.initState();
     ScopedModel.of<MainModel>(context).checkOrder();
-  
+
     initLocation();
   }
 
-  initLocation() async{
+  initLocation() async {
     await _locationService.changeSettings(
         accuracy: LocationAccuracy.HIGH, interval: 1000);
 
@@ -159,39 +124,196 @@ class _DetilOrderState extends State<DetilOrder> {
       _startLocation = location;
     });
   }
+
   slowRefresh() async {
     _locationSubscription.cancel();
     await _locationService.changeSettings(
         accuracy: LocationAccuracy.BALANCED, interval: 10000);
     _locationSubscription =
         _locationService.onLocationChanged().listen((LocationData result) {
-          if (mounted) {
-            setState(() {
-              _currentLocation = result;
-            });
-          }
+      if (mounted) {
+        setState(() {
+          _currentLocation = result;
         });
+      }
+    });
   }
-  onRefresh(MainModel model) async{
+
+  onRefresh(MainModel model) async {
     await model.checkOrder();
   }
-  onChangeStatusOrder(Function change) async{
-    var status = (ScopedModel.of<MainModel>(context).currentOrder.orderStatus+1).toString();
-    var current = ScopedModel.of<MainModel>(context).currentOrder.orderId.toString();
+
+  onChangeStatusOrder(Function change) async {
+    var status =
+        (ScopedModel.of<MainModel>(context).currentOrder.orderStatus + 1)
+            .toString();
+    var current =
+        ScopedModel.of<MainModel>(context).currentOrder.orderId.toString();
     FormData fm = new FormData();
-    fm.fields.add(MapEntry('order_id',current));
-    fm.fields.add(MapEntry('status',status));
+    fm.fields.add(MapEntry('order_id', current));
+    fm.fields.add(MapEntry('status', status));
     print(current);
     print(status);
     ResponseApi response = await change(fm);
     print(response.message);
   }
 
-  onCancelOrder(Function change) async{
+  onCancelOrder(Function change) async {
     FormData fm = new FormData();
-    fm.fields.add(MapEntry('order_id',curOrderId));
-    fm.fields.add(MapEntry('status',Order.statusCANCEL));
+    fm.fields.add(MapEntry('order_id', curOrderId));
+    fm.fields.add(MapEntry('status', Order.statusCANCEL));
     ResponseApi response = await change(fm);
     print(response.status);
+  }
+
+  Widget _buildCard(MainModel model) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Card(
+            elevation: 8,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            child: Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height: 200,
+                    width: double.infinity,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[350],
+                          ),
+                          child: Center(
+                              child: Text(
+                            "Pemesanan 0001",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          )),
+                        ),
+                        SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: 100
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(children: <Widget>[
+                                    Text("Tanggal Pesanan"),
+                                    Text("Tanggal Pesanan"),
+                                  ]),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(children: <Widget>[
+                                    Text("Tanggal Pesanan"),
+                                    Text("Tanggal Pesanan"),
+                                  ]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text("Lokasi Awal"),
+                                  Text("Place 1"),
+                                ]),
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text("Lokasi Tujuan"),
+                                  Text("Place 1"),
+                                ]),
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text("Harga"),
+                                  Text("Rp."),
+                                ]),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 80,
+                    child: Card(
+                      color: Color(0xFFF100550),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              MaterialButton(
+                                color: primaryColor,
+                                onPressed: () {
+//              onChangeStatusOrder(model.changeStatusOrder);
+//              model.checkOrder();
+                                },
+                                child: Text("Jemput"),
+                              ),
+                              MaterialButton(
+                                color: Color(0xFFFFF0000),
+                                onPressed: () {
+//              onCancelOrder(model.changeStatusOrder);
+                                },
+                                child: Text(
+                                  "Batalkan",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+        ],
+      ),
+    );
   }
 }

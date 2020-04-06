@@ -1,6 +1,7 @@
 import 'package:driver/ui/pages/detil_order.dart';
 import 'package:driver/ui/pages/profile.dart';
 import 'package:driver/ui/pages/request_saldo.dart';
+import 'package:driver/ui/pages/setting.dart';
 import 'package:driver/ui/widgets/ui_elements/dashboard/category.dart';
 
 import 'package:flutter/material.dart';
@@ -40,6 +41,8 @@ class Categories extends StatelessWidget {
                       Navigator.of(context).push(MaterialPageRoute(builder: (_)=>RequestSaldoPage()));
                     }else if (item['id']=='transaksi') {
                       Navigator.of(context).push(MaterialPageRoute(builder: (_)=>DetilOrder()));
+                    }else if (item['id']=='setting') {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SettingPage()));
                     }else{
                       Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfilePage()));
                     }

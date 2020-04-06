@@ -5,7 +5,18 @@ import 'package:driver/ui/widgets/ui_elements/dashboard/last_transaction.dart';
 import 'package:driver/ui/widgets/ui_elements/dashboard/top_account_info.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-class Dashboard3 extends StatelessWidget {
+class Dashboard3 extends StatefulWidget {
+  @override
+  _Dashboard3State createState() => _Dashboard3State();
+}
+
+class _Dashboard3State extends State<Dashboard3> {
+
+  @override
+  void initState() {
+    ScopedModel.of<MainModel>(context).getUser();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     Size deviceSize = MediaQuery.of(context).size;
@@ -46,6 +57,7 @@ class Dashboard3 extends StatelessWidget {
       ),
     );
   }
+
   AppBar buildAppBar() {
     return AppBar(
       elevation: 0.0,
@@ -83,9 +95,11 @@ class Dashboard3 extends StatelessWidget {
       ],
     );
   }
+
   Future onRefresh(MainModel onGenerate){
     try {
-      onGenerate.getUser();  
+      onGenerate.getUser();
+      // onGenerate.getLastTransaksi();  
       
       return Future.delayed(Duration(seconds: 5));
     } catch (e) {

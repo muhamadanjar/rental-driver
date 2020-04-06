@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:driver/scope/main_model.dart';
+import 'package:driver/ui/pages/change_password.dart';
 import 'package:driver/ui/themes/styles.dart';
 import 'package:driver/ui/views/base_view.dart';
 import 'package:driver/ui/views/view_ubahpass.dart';
@@ -38,7 +39,7 @@ class SettingPage extends StatelessWidget {
                   BaseView<MainModel>(
                     builder:(BuildContext context,Widget child,MainModel model) {
                       String email = model.user != null ? model.user.email : 'User Driver';
-                      String noAnggota = model.user != null ? (model.user.account != null ? (model.user.account.noAnggota != null ? model.user.account.noAnggota:'No Anggota') :'No Anggota') :'No Anggota';
+                      String noAnggota = model.account != null ? (model.account != null ? (model.account.noAnggota != null ? model.account.noAnggota:'No Anggota') :'No Anggota') :'No Anggota';
                       
                     return ListTile(
                       leading: CircleAvatar(
@@ -54,7 +55,7 @@ class SettingPage extends StatelessWidget {
                   ),
                   _buildDivider(),
                   InkWell(
-                    onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (_) => SettingViewPage(page: 'ubahpwd',))),
+                    onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (_) => ChangePassword())),
                     child: ListTile(
                       title: Text("Ubah Password"),
                       trailing: Icon(FontAwesomeIcons.caretRight),
